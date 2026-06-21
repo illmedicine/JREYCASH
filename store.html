@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JREY CASH | Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header class="top-bar">
+        <div class="top-logo">
+            <span class="logo-j">J</span><span class="logo-rest">REY</span>
+            <span class="logo-cash">CA$H</span>
+        </div>
+        <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">← Back</a>
+    </header>
+
+    <div class="main-app" style="display:block;">
+
+        <section class="section">
+            <div class="section-header">
+                <h2>Official Merch</h2>
+                <span class="section-badge">STORE</span>
+            </div>
+
+            <div class="store-grid">
+                <div class="merch-card">
+                    <div class="merch-image">👕</div>
+                    <div class="merch-info">
+                        <h4>Jefe Tee — Black</h4>
+                        <p class="merch-price">$35.00</p>
+                        <p class="merch-desc">Premium cotton, neon logo print</p>
+                        <div class="merch-engagement">
+                            <button class="btn-like" onclick="toggleLike(this, this.closest('.merch-card').querySelector('h4').textContent.trim())">
+                                <span class="like-icon">♡</span>
+                                <span class="like-count">48</span>
+                            </button>
+                            <button class="btn-comment" onclick="openComments('merch-1')">💬 <span>6</span></button>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="merch-card">
+                    <div class="merch-image">🧢</div>
+                    <div class="merch-info">
+                        <h4>716 Snapback</h4>
+                        <p class="merch-price">$28.00</p>
+                        <p class="merch-desc">Buffalo edition, embroidered</p>
+                        <div class="merch-engagement">
+                            <button class="btn-like" onclick="toggleLike(this, this.closest('.merch-card').querySelector('h4').textContent.trim())">
+                                <span class="like-icon">♡</span>
+                                <span class="like-count">33</span>
+                            </button>
+                            <button class="btn-comment" onclick="openComments('merch-2')">💬 <span>4</span></button>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="merch-card">
+                    <div class="merch-image">🏋️</div>
+                    <div class="merch-info">
+                        <h4>CA$H Hoodie</h4>
+                        <p class="merch-price">$65.00</p>
+                        <p class="merch-desc">Heavyweight, Miami neon colorway</p>
+                        <div class="merch-engagement">
+                            <button class="btn-like" onclick="toggleLike(this, this.closest('.merch-card').querySelector('h4').textContent.trim())">
+                                <span class="like-icon">♡</span>
+                                <span class="like-count">72</span>
+                            </button>
+                            <button class="btn-comment" onclick="openComments('merch-3')">💬 <span>11</span></button>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="merch-card">
+                    <div class="merch-image">🎒</div>
+                    <div class="merch-info">
+                        <h4>Jefe Duffle Bag</h4>
+                        <p class="merch-price">$55.00</p>
+                        <p class="merch-desc">Reflective logo, travel ready</p>
+                        <div class="merch-engagement">
+                            <button class="btn-like" onclick="toggleLike(this, this.closest('.merch-card').querySelector('h4').textContent.trim())">
+                                <span class="like-icon">♡</span>
+                                <span class="like-count">19</span>
+                            </button>
+                            <button class="btn-comment" onclick="openComments('merch-4')">💬 <span>2</span></button>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="merch-card">
+                    <div class="merch-image">📀</div>
+                    <div class="merch-info">
+                        <h4>Signed "Chips" CD</h4>
+                        <p class="merch-price">$20.00</p>
+                        <p class="merch-desc">Limited edition, hand-signed</p>
+                        <div class="merch-engagement">
+                            <button class="btn-like" onclick="toggleLike(this, this.closest('.merch-card').querySelector('h4').textContent.trim())">
+                                <span class="like-icon">♡</span>
+                                <span class="like-count">94</span>
+                            </button>
+                            <button class="btn-comment" onclick="openComments('merch-5')">💬 <span>15</span></button>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="merch-card">
+                    <div class="merch-image">🧤</div>
+                    <div class="merch-info">
+                        <h4>Buffalo Gloves</h4>
+                        <p class="merch-price">$22.00</p>
+                        <p class="merch-desc">Winter edition, touchscreen tips</p>
+                        <div class="merch-engagement">
+                            <button class="btn-like" onclick="toggleLike(this, this.closest('.merch-card').querySelector('h4').textContent.trim())">
+                                <span class="like-icon">♡</span>
+                                <span class="like-count">27</span>
+                            </button>
+                            <button class="btn-comment" onclick="openComments('merch-6')">💬 <span>3</span></button>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comments Modal -->
+        <div id="comments-modal" class="comments-modal" style="display:none;">
+            <div class="comments-panel">
+                <div class="comments-header">
+                    <h3>Comments</h3>
+                    <button onclick="closeComments()">✕</button>
+                </div>
+                <div class="comments-list" id="comments-list">
+                    <div class="comment">
+                        <strong>BuffaloFan716</strong>
+                        <p>Copped the hoodie, quality is insane 🔥</p>
+                        <span class="comment-time">3h ago</span>
+                    </div>
+                    <div class="comment">
+                        <strong>CashMob_BK</strong>
+                        <p>Need that signed CD before it sells out</p>
+                        <span class="comment-time">8h ago</span>
+                    </div>
+                </div>
+                <div class="comment-input">
+                    <input type="text" placeholder="Add a comment..." id="comment-text">
+                    <button onclick="postComment()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <a href="index.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                Feed
+            </a>
+            <a href="store.html" class="nav-item active">
+                <span class="nav-icon">🛍️</span>
+                Store
+            </a>
+            <a href="index.html#leaderboard" class="nav-item">
+                <span class="nav-icon">🏆</span>
+                Prestige
+            </a>
+            <a href="index.html#music" class="nav-item">
+                <span class="nav-icon">🎵</span>
+                Music
+            </a>
+            <a href="#" class="nav-item" onclick="accessPortal(event)">
+                <span class="nav-icon">🔒</span>
+                Portal
+            </a>
+        </nav>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

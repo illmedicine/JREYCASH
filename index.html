@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JREY CASH | Official App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Splash / Auth Gate -->
+    <div id="auth-gate" class="auth-gate">
+        <div class="auth-content">
+            <div class="auth-logo">
+                <span class="logo-j">J</span><span class="logo-rest">REY</span>
+                <span class="logo-cash">CA$H</span>
+            </div>
+            <p class="auth-tagline">Buffalo's Finest. Exclusive Access.</p>
+            <button id="google-signin-btn" class="btn-google" onclick="signInWithGoogle()">
+                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                Sign in with Google
+            </button>
+            <p class="auth-disclaimer">Sign in to unlock exclusive content, earn prestige, and join the leaderboard.</p>
+        </div>
+    </div>
+
+    <!-- Main App (hidden until auth) -->
+    <div id="main-app" class="main-app" style="display:none;">
+
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="top-logo">
+                <span class="logo-j">J</span><span class="logo-rest">REY</span>
+                <span class="logo-cash">CA$H</span>
+            </div>
+            <div class="top-right">
+                <div class="prestige-badge" id="user-prestige">
+                    <span class="badge-icon">🔥</span>
+                    <span class="badge-level">LVL 1</span>
+                </div>
+                <div class="user-avatar" id="user-avatar" onclick="toggleUserMenu()">
+                    <img src="" alt="" id="user-photo">
+                </div>
+            </div>
+        </header>
+
+        <!-- User Dropdown -->
+        <div id="user-menu" class="user-menu" style="display:none;">
+            <p id="user-display-name" class="user-menu-name"></p>
+            <p id="user-email-display" class="user-menu-email"></p>
+            <div class="user-menu-stats">
+                <span>🏆 Prestige Level: <strong id="menu-prestige-level">1</strong></span>
+                <span>🔥 Streak: <strong id="menu-streak">0 days</strong></span>
+            </div>
+            <button class="btn-signout" onclick="signOut()">Sign Out</button>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <p class="hero-label">BUFFALO, NY</p>
+                <h1 class="hero-title">JREY<br>CA$H</h1>
+                <p class="hero-subtitle">The Jefe. Upstate's Next Legend.</p>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-num">153K+</span>
+                        <span class="hero-stat-label">Plays on "Chips"</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-num">830</span>
+                        <span class="hero-stat-label">Monthly Listeners</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-num">7+</span>
+                        <span class="hero-stat-label">Albums & EPs</span>
+                    </div>
+                </div>
+                <div class="hero-cta">
+                    <a href="https://open.spotify.com/artist/4EC8GXYTDjrBDN9iZJt8yI" target="_blank" class="btn-stream">
+                        <span>▶</span> Stream on Spotify
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Latest Drop Banner -->
+        <section class="latest-drop">
+            <div class="drop-badge">NEW DROP</div>
+            <div class="drop-info">
+                <h3>Fantasy Remix</h3>
+                <p>Latest single — out now on all platforms</p>
+            </div>
+            <a href="https://open.spotify.com/artist/4EC8GXYTDjrBDN9iZJt8yI" target="_blank" class="drop-play">▶</a>
+        </section>
+
+        <!-- Section: Exclusive Content -->
+        <section class="section" id="exclusives">
+            <div class="section-header">
+                <h2>Exclusives</h2>
+                <span class="section-badge">APP ONLY</span>
+            </div>
+
+            <div class="exclusive-feed" id="exclusive-feed">
+                <!-- Placeholder exclusive items -->
+                <div class="exclusive-card">
+                    <div class="exclusive-media">
+                        <div class="media-placeholder video">
+                            <span>🎬</span>
+                            <p>Behind the Scenes: "Chips" Music Video</p>
+                        </div>
+                    </div>
+                    <div class="exclusive-info">
+                        <h4>BTS: Chips Video Shoot</h4>
+                        <p class="exclusive-date">Exclusive Drop • Jun 2026</p>
+                        <div class="exclusive-engagement">
+                            <button class="btn-like" onclick="toggleLike(this, 'exc-chips-bts')">
+                                <span class="like-icon">♡</span>
+                                <span class="like-count">124</span>
+                            </button>
+                            <button class="btn-comment" onclick="openComments('exc-chips-bts')">
+                                💬 <span>18</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exclusive-card">
+                    <div class="exclusive-media">
+                        <div class="media-placeholder audio">
+                            <span>🎵</span>
+                            <p>Unreleased Track: "Buffalo Nights"</p>
+                        </div>
+                    </div>
+                    <div class="exclusive-info">
+                        <h4>Unreleased: Buffalo Nights</h4>
+                        <p class="exclusive-date">Exclusive Drop • Jun 2026</p>
+                        <div class="exclusive-engagement">
+                            <button class="btn-like" onclick="toggleLike(this, 'exc-buffalo-nights')">
+                                <span class="like-icon">♡</span>
+                                <span class="like-count">89</span>
+                            </button>
+                            <button class="btn-comment" onclick="openComments('exc-buffalo-nights')">
+                                💬 <span>7</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exclusive-card">
+                    <div class="exclusive-media">
+                        <div class="media-placeholder video">
+                            <span>🎤</span>
+                            <p>Freestyle Session — Studio Vibes</p>
+                        </div>
+                    </div>
+                    <div class="exclusive-info">
+                        <h4>Studio Freestyle (Raw)</h4>
+                        <p class="exclusive-date">Exclusive Drop • May 2026</p>
+                        <div class="exclusive-engagement">
+                            <button class="btn-like" onclick="toggleLike(this, 'exc-studio-freestyle')">
+                                <span class="like-icon">♡</span>
+                                <span class="like-count">212</span>
+                            </button>
+                            <button class="btn-comment" onclick="openComments('exc-studio-freestyle')">
+                                💬 <span>31</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Discography -->
+        <section class="section" id="music">
+            <div class="section-header">
+                <h2>Discography</h2>
+            </div>
+
+            <div class="discography-scroll">
+                <div class="album-card">
+                    <div class="album-art gradient-1"></div>
+                    <h4>The Biggest Member 4</h4>
+                    <p>2025 • Album</p>
+                </div>
+                <div class="album-card">
+                    <div class="album-art gradient-2"></div>
+                    <h4>Jefe Take Over 2 Deluxe</h4>
+                    <p>2023 • Album</p>
+                </div>
+                <div class="album-card">
+                    <div class="album-art gradient-3"></div>
+                    <h4>Jefeeee Deluxe</h4>
+                    <p>2020 • Album</p>
+                </div>
+                <div class="album-card">
+                    <div class="album-art gradient-4"></div>
+                    <h4>Jefe Take Over</h4>
+                    <p>2019 • Album</p>
+                </div>
+                <div class="album-card">
+                    <div class="album-art gradient-5"></div>
+                    <h4>Donations Vol.3</h4>
+                    <p>2020 • Album</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Top Tracks -->
+        <section class="section" id="tracks">
+            <div class="section-header">
+                <h2>Top Tracks</h2>
+            </div>
+
+            <div class="tracklist">
+                <div class="track-item">
+                    <span class="track-num">01</span>
+                    <div class="track-info">
+                        <h4>Chips</h4>
+                        <p>Jefe Take Over • 2019</p>
+                    </div>
+                    <span class="track-plays">153.2K</span>
+                </div>
+                <div class="track-item">
+                    <span class="track-num">02</span>
+                    <div class="track-info">
+                        <h4>Let the Money Talk</h4>
+                        <p>Single • 2023</p>
+                    </div>
+                    <span class="track-plays">22K</span>
+                </div>
+                <div class="track-item">
+                    <span class="track-num">03</span>
+                    <div class="track-info">
+                        <h4>Chicken Talk</h4>
+                        <p>Single • 2025</p>
+                    </div>
+                    <span class="track-plays">19.1K</span>
+                </div>
+                <div class="track-item">
+                    <span class="track-num">04</span>
+                    <div class="track-info">
+                        <h4>Upstate Cheat Code</h4>
+                        <p>ft. Dini • 2024</p>
+                    </div>
+                    <span class="track-plays">5.5K</span>
+                </div>
+                <div class="track-item">
+                    <span class="track-num">05</span>
+                    <div class="track-info">
+                        <h4>Fantasy Remix</h4>
+                        <p>Single • 2026</p>
+                    </div>
+                    <span class="track-plays">NEW</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Prestige Leaderboard -->
+        <section class="section" id="leaderboard">
+            <div class="section-header">
+                <h2>Prestige Board</h2>
+                <span class="section-badge">LIVE</span>
+            </div>
+
+            <div class="leaderboard" id="leaderboard-list">
+                <!-- Populated by Firestore in real-time, fallback below -->
+                <div class="leaderboard-item rank-1">
+                    <span class="lb-rank">👑</span>
+                    <div class="lb-info">
+                        <h4>BuffaloFan716</h4>
+                        <p>Level 12 • Diamond Prestige</p>
+                    </div>
+                    <span class="lb-points">14,280 pts</span>
+                </div>
+                <div class="leaderboard-item rank-2">
+                    <span class="lb-rank">2</span>
+                    <div class="lb-info">
+                        <h4>JefeGang_Nate</h4>
+                        <p>Level 10 • Platinum Prestige</p>
+                    </div>
+                    <span class="lb-points">11,450 pts</span>
+                </div>
+                <div class="leaderboard-item rank-3">
+                    <span class="lb-rank">3</span>
+                    <div class="lb-info">
+                        <h4>UpstateQueen</h4>
+                        <p>Level 9 • Platinum Prestige</p>
+                    </div>
+                    <span class="lb-points">9,820 pts</span>
+                </div>
+            </div>
+
+            <div class="prestige-tiers">
+                <h3>Prestige Tiers & Rewards</h3>
+                <div class="tier">
+                    <span class="tier-icon">🥉</span>
+                    <div>
+                        <strong>Bronze (LVL 1-3)</strong>
+                        <p>App access + comment privileges</p>
+                    </div>
+                </div>
+                <div class="tier">
+                    <span class="tier-icon">🥈</span>
+                    <div>
+                        <strong>Silver (LVL 4-6)</strong>
+                        <p>Early access to merch drops</p>
+                    </div>
+                </div>
+                <div class="tier">
+                    <span class="tier-icon">🥇</span>
+                    <div>
+                        <strong>Gold (LVL 7-9)</strong>
+                        <p>Early music access + exclusive merch</p>
+                    </div>
+                </div>
+                <div class="tier">
+                    <span class="tier-icon">💎</span>
+                    <div>
+                        <strong>Platinum (LVL 10-11)</strong>
+                        <p>Signed merch + shoutout eligibility</p>
+                    </div>
+                </div>
+                <div class="tier">
+                    <span class="tier-icon">👑</span>
+                    <div>
+                        <strong>Diamond (LVL 12+)</strong>
+                        <p>Meet & greet + VIP event access</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Music Videos (YouTube) -->
+        <section class="section" id="videos">
+            <div class="section-header">
+                <h2>Videos</h2>
+            </div>
+
+            <div class="video-feed">
+                <div class="video-card">
+                    <div class="video-embed">
+                        <iframe src="https://www.youtube.com/embed/IMboFsz0j-E" title="Chips" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                    </div>
+                    <h4>Chips (Official Video)</h4>
+                    <p>45.2K views</p>
+                </div>
+                <div class="video-card">
+                    <div class="video-embed">
+                        <iframe src="https://www.youtube.com/embed/16lSCZ960fg" title="FREE SOS & FREE STAIN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                    </div>
+                    <h4>FREE SOS & FREE STAIN</h4>
+                    <p>Official Video</p>
+                </div>
+                <div class="video-card">
+                    <div class="video-embed">
+                        <iframe src="https://www.youtube.com/embed/UVzRgrXVZzg" title="Let The Money Talk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                    </div>
+                    <h4>Let The Money Talk</h4>
+                    <p>Official Video</p>
+                </div>
+                <div class="video-card">
+                    <div class="video-embed">
+                        <iframe src="https://www.youtube.com/embed/HnFqp5Ru2nQ" title="Back Outside" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                    </div>
+                    <h4>Back Outside</h4>
+                    <p>Official Video</p>
+                </div>
+                <div class="video-card">
+                    <div class="video-embed">
+                        <iframe src="https://www.youtube.com/embed/FML0_PobbhA" title="Chicken Talk ft Chicken P" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                    </div>
+                    <h4>Chicken Talk ft Chicken P</h4>
+                    <p>Official Video</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Connect -->
+        <section class="section" id="connect">
+            <div class="section-header">
+                <h2>Connect</h2>
+            </div>
+
+            <div class="social-links">
+                <a href="https://www.instagram.com/jreycash/" target="_blank" class="social-link instagram">
+                    <span class="social-icon">📸</span>
+                    <span>Instagram</span>
+                    <span class="social-handle">@jreycash</span>
+                </a>
+                <a href="https://open.spotify.com/artist/4EC8GXYTDjrBDN9iZJt8yI" target="_blank" class="social-link spotify">
+                    <span class="social-icon">🎧</span>
+                    <span>Spotify</span>
+                    <span class="social-handle">Jrey Cash</span>
+                </a>
+                <a href="https://music.apple.com/us/artist/jrey-cash/1112364392" target="_blank" class="social-link apple">
+                    <span class="social-icon">🍎</span>
+                    <span>Apple Music</span>
+                    <span class="social-handle">Jrey Cash</span>
+                </a>
+                <a href="https://soundcloud.com/jreycash" target="_blank" class="social-link soundcloud">
+                    <span class="social-icon">☁️</span>
+                    <span>SoundCloud</span>
+                    <span class="social-handle">jreycash</span>
+                </a>
+                <a href="https://www.youtube.com/@jreycash" target="_blank" class="social-link youtube">
+                    <span class="social-icon">▶️</span>
+                    <span>YouTube</span>
+                    <span class="social-handle">Jrey Cash</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Comments Modal -->
+        <div id="comments-modal" class="comments-modal" style="display:none;">
+            <div class="comments-panel">
+                <div class="comments-header">
+                    <h3>Comments</h3>
+                    <button onclick="closeComments()">✕</button>
+                </div>
+                <div class="comments-list" id="comments-list">
+                    <div class="comment">
+                        <strong>JefeGang_Nate</strong>
+                        <p>This is heat 🔥🔥🔥</p>
+                        <span class="comment-time">2h ago</span>
+                    </div>
+                    <div class="comment">
+                        <strong>UpstateQueen</strong>
+                        <p>Buffalo stand up!! Jrey never misses</p>
+                        <span class="comment-time">5h ago</span>
+                    </div>
+                    <div class="comment">
+                        <strong>BuffaloFan716</strong>
+                        <p>Been waiting for this drop 💎</p>
+                        <span class="comment-time">1d ago</span>
+                    </div>
+                </div>
+                <div class="comment-input">
+                    <input type="text" placeholder="Add a comment..." id="comment-text">
+                    <button onclick="postComment()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" onclick="scrollToSection(event, 'exclusives')">
+                <span class="nav-icon">🏠</span>
+                Feed
+            </a>
+            <a href="store.html" class="nav-item">
+                <span class="nav-icon">🛍️</span>
+                Store
+            </a>
+            <a href="#" class="nav-item" onclick="scrollToSection(event, 'leaderboard')">
+                <span class="nav-icon">🏆</span>
+                Prestige
+            </a>
+            <a href="#" class="nav-item" onclick="scrollToSection(event, 'music')">
+                <span class="nav-icon">🎵</span>
+                Music
+            </a>
+            <a href="#" class="nav-item" onclick="accessPortal(event)">
+                <span class="nav-icon">🔒</span>
+                Portal
+            </a>
+        </nav>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

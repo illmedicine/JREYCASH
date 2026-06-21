@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JREY CASH | Owner Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .portal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 24px;
+        }
+        .portal-header h1 {
+            font-size: 1.8rem;
+            color: var(--neon-cyan);
+        }
+        .portal-header a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .analytics-section-title {
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 100%;
+            padding: 14px;
+        }
+        .chart-bar {
+            flex: 1;
+            border-radius: 4px 4px 0 0;
+            min-height: 8px;
+            position: relative;
+        }
+        .chart-bar span {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
+
+        .demo-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .demo-table th {
+            text-align: left;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 8px 6px;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .demo-table td {
+            padding: 10px 6px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .demo-table tr:last-child td { border-bottom: none; }
+
+        .platform-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+        .platform-icon { font-size: 1.4rem; width: 32px; text-align: center; }
+        .platform-info { flex: 1; }
+        .platform-info h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        .platform-info p {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        .platform-stat {
+            text-align: right;
+        }
+        .platform-stat .big {
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+        .platform-stat .trend {
+            font-size: 0.65rem;
+            color: var(--neon-green);
+        }
+
+        .time-filter {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .time-btn {
+            padding: 6px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .time-btn.active {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            background: rgba(0, 243, 255, 0.08);
+        }
+
+        .insight-card {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.06), rgba(255, 0, 255, 0.06));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .insight-card h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .insight-card p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body style="padding: 16px 16px 40px;">
+
+    <div class="portal-header">
+        <div>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">Welcome back,</p>
+            <h1>Jrey Cash</h1>
+        </div>
+        <a href="index.html">← Exit to App</a>
+    </div>
+
+    <!-- Time Filter -->
+    <div class="time-filter">
+        <button class="time-btn" onclick="setTimeFilter(this)">24h</button>
+        <button class="time-btn active" onclick="setTimeFilter(this)">7d</button>
+        <button class="time-btn" onclick="setTimeFilter(this)">30d</button>
+        <button class="time-btn" onclick="setTimeFilter(this)">All</button>
+    </div>
+
+    <!-- Key Metrics -->
+    <p class="analytics-section-title">Overview</p>
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <span class="stat-title">App Exclusive Plays</span>
+            <span class="stat-value">24,592</span>
+            <span class="stat-trend">↑ 12% this week</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Active Users</span>
+            <span class="stat-value" style="color: var(--neon-cyan);">1,847</span>
+            <span class="stat-trend">↑ 8% this week</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Store Revenue</span>
+            <span class="stat-value" style="color: var(--neon-magenta);">$1,240</span>
+            <span class="stat-trend">↑ 5% today</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">New Signups</span>
+            <span class="stat-value" style="color: var(--neon-green);">312</span>
+            <span class="stat-trend">↑ 22% this week</span>
+        </div>
+    </div>
+
+    <!-- Platform Sync -->
+    <p class="analytics-section-title">Platform Analytics</p>
+    <div style="margin-bottom: 24px;">
+        <div class="platform-row">
+            <span class="platform-icon">🟢</span>
+            <div class="platform-info">
+                <h4>Spotify</h4>
+                <p>830 monthly listeners • 681 followers</p>
+            </div>
+            <div class="platform-stat">
+                <div class="big" style="color: #1DB954;">153.2K</div>
+                <div class="trend">Total streams</div>
+            </div>
+        </div>
+        <div class="platform-row">
+            <span class="platform-icon">▶️</span>
+            <div class="platform-info">
+                <h4>YouTube</h4>
+                <p>5 official videos • DGB Media</p>
+            </div>
+            <div class="platform-stat">
+                <div class="big" style="color: #FF0000;">45.2K</div>
+                <div class="trend">"Chips" views</div>
+            </div>
+        </div>
+        <div class="platform-row">
+            <span class="platform-icon">📸</span>
+            <div class="platform-info">
+                <h4>Instagram</h4>
+                <p>@jreycash • Buffalo, NY</p>
+            </div>
+            <div class="platform-stat">
+                <div class="big" style="color: #E1306C;">—</div>
+                <div class="trend">Sync pending</div>
+            </div>
+        </div>
+        <div class="platform-row">
+            <span class="platform-icon">🍎</span>
+            <div class="platform-info">
+                <h4>Apple Music</h4>
+                <p>7 albums • 10+ singles</p>
+            </div>
+            <div class="platform-stat">
+                <div class="big" style="color: #fc3c44;">Active</div>
+                <div class="trend">Catalog synced</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Listening Chart -->
+    <p class="analytics-section-title">Weekly Listening Activity</p>
+    <div class="chart-card" style="margin-bottom: 24px; height: 200px;">
+        <div class="chart-bars">
+            <div class="chart-bar" style="height: 45%; background: var(--neon-cyan);"><span>Mon</span></div>
+            <div class="chart-bar" style="height: 62%; background: var(--neon-cyan);"><span>Tue</span></div>
+            <div class="chart-bar" style="height: 38%; background: var(--neon-cyan);"><span>Wed</span></div>
+            <div class="chart-bar" style="height: 80%; background: linear-gradient(180deg, var(--neon-magenta), var(--neon-cyan));"><span>Thu</span></div>
+            <div class="chart-bar" style="height: 95%; background: linear-gradient(180deg, var(--neon-magenta), var(--neon-cyan));"><span>Fri</span></div>
+            <div class="chart-bar" style="height: 100%; background: linear-gradient(180deg, var(--neon-magenta), var(--neon-cyan));"><span>Sat</span></div>
+            <div class="chart-bar" style="height: 72%; background: var(--neon-cyan);"><span>Sun</span></div>
+        </div>
+    </div>
+
+    <!-- Demographics -->
+    <p class="analytics-section-title">Fan Demographics</p>
+    <div class="action-section" style="margin-bottom: 24px;">
+        <table class="demo-table">
+            <thead>
+                <tr>
+                    <th>City</th>
+                    <th>Users</th>
+                    <th>Avg Listen/Day</th>
+                    <th>Top Track</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Buffalo, NY</strong></td>
+                    <td>482</td>
+                    <td>23 min</td>
+                    <td style="color: var(--neon-cyan);">Chips</td>
+                </tr>
+                <tr>
+                    <td><strong>New York, NY</strong></td>
+                    <td>318</td>
+                    <td>18 min</td>
+                    <td style="color: var(--neon-cyan);">Let the Money Talk</td>
+                </tr>
+                <tr>
+                    <td><strong>Rochester, NY</strong></td>
+                    <td>201</td>
+                    <td>15 min</td>
+                    <td style="color: var(--neon-cyan);">Chicken Talk</td>
+                </tr>
+                <tr>
+                    <td><strong>Atlanta, GA</strong></td>
+                    <td>145</td>
+                    <td>12 min</td>
+                    <td style="color: var(--neon-cyan);">Chips</td>
+                </tr>
+                <tr>
+                    <td><strong>Toronto, ON</strong></td>
+                    <td>89</td>
+                    <td>10 min</td>
+                    <td style="color: var(--neon-cyan);">Fantasy Remix</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Age & Gender -->
+    <div class="dashboard-grid" style="margin-bottom: 24px;">
+        <div class="stat-card">
+            <span class="stat-title">Top Age Group</span>
+            <span class="stat-value" style="font-size: 1.4rem;">18-24</span>
+            <span class="stat-trend">42% of listeners</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Peak Hours</span>
+            <span class="stat-value" style="font-size: 1.4rem;">9PM-1AM</span>
+            <span class="stat-trend">Late night dominates</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Avg Session</span>
+            <span class="stat-value" style="font-size: 1.4rem;">14 min</span>
+            <span class="stat-trend">↑ 3 min vs last week</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Return Rate</span>
+            <span class="stat-value" style="font-size: 1.4rem;">68%</span>
+            <span class="stat-trend">↑ 5% this month</span>
+        </div>
+    </div>
+
+    <!-- Insights -->
+    <p class="analytics-section-title">Smart Insights</p>
+    <div class="insight-card">
+        <h4>🔥 "Chips" is trending in Atlanta</h4>
+        <p>Streams from Atlanta increased 34% this week. Consider targeting ATL in your next promo push.</p>
+    </div>
+    <div class="insight-card">
+        <h4>📈 Friday/Saturday are peak days</h4>
+        <p>Drop exclusive content on Thursdays to capitalize on weekend listening surge.</p>
+    </div>
+    <div class="insight-card">
+        <h4>🛒 Hoodie is your best seller</h4>
+        <p>CA$H Hoodie accounts for 38% of store revenue. Consider a new colorway drop.</p>
+    </div>
+
+    <div style="height: 24px;"></div>
+
+    <!-- Content Upload -->
+    <p class="analytics-section-title">Manage Content</p>
+    <div class="action-section">
+        <h2 style="color: var(--neon-cyan);">Content Drop</h2>
+        <p>Upload exclusive tracks, music videos, or behind-the-scenes footage directly to the fan feed.</p>
+        <button class="btn-action cyan">+ Upload Exclusive Media</button>
+    </div>
+
+    <div class="action-section">
+        <h2>Store Inventory</h2>
+        <p>Add new merchandise, update sizes, and upload high-res product shots.</p>
+        <button class="btn-action">+ Add New Merch Item</button>
+    </div>
+
+    <div class="action-section">
+        <h2 style="color: var(--neon-green);">Fan Management</h2>
+        <p>View active users, manage prestige levels, and send push notifications to your fans.</p>
+        <button class="btn-action green">View All Fans (1,847)</button>
+    </div>
+
+    <script>
+        function setTimeFilter(btn) {
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>
