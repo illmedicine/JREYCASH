@@ -183,31 +183,37 @@
                     <img class="album-art" src="https://i.scdn.co/image/ab67616d0000b273e578856c5531298d7755a39f" alt="The Biggest Member 4" loading="lazy">
                     <h4>The Biggest Member 4</h4>
                     <p>2025 • Album</p>
+                    <button class="btn-album-comment" onclick="openQuickComment('alb-tbm4', 'The Biggest Member 4')">💬</button>
                 </div>
                 <div class="album-card">
                     <img class="album-art" src="https://i.scdn.co/image/ab67616d0000b2731e619bd6bb24a6b16f26df9a" alt="Jefe Take Over 2 Deluxe" loading="lazy">
                     <h4>Jefe Take Over 2 Deluxe</h4>
                     <p>2023 • Album</p>
+                    <button class="btn-album-comment" onclick="openQuickComment('alb-jto2d', 'Jefe Take Over 2 Deluxe')">💬</button>
                 </div>
                 <div class="album-card">
                     <img class="album-art" src="https://i.scdn.co/image/ab67616d0000b273b3358b963b2fdb2befc9a811" alt="Jefeeee Deluxe" loading="lazy">
                     <h4>Jefeeee Deluxe</h4>
                     <p>2020 • Album</p>
+                    <button class="btn-album-comment" onclick="openQuickComment('alb-jefeeeed', 'Jefeeee Deluxe')">💬</button>
                 </div>
                 <div class="album-card">
                     <img class="album-art" src="https://i.scdn.co/image/ab67616d0000b2730237ebade46467bd7c5f98f4" alt="Jefeeee" loading="lazy">
                     <h4>Jefeeee</h4>
                     <p>2020 • Album</p>
+                    <button class="btn-album-comment" onclick="openQuickComment('alb-jefeeee', 'Jefeeee')">💬</button>
                 </div>
                 <div class="album-card">
                     <img class="album-art" src="https://i.scdn.co/image/ab67616d0000b27362865a854bf33698e7fffc53" alt="Jefe Take Over" loading="lazy">
                     <h4>Jefe Take Over</h4>
                     <p>2019 • Album</p>
+                    <button class="btn-album-comment" onclick="openQuickComment('alb-jto', 'Jefe Take Over')">💬</button>
                 </div>
                 <div class="album-card">
                     <img class="album-art" src="https://i.scdn.co/image/ab67616d0000b27315ea75059d6bb74a97a333c1" alt="Jefe Take Over 2" loading="lazy">
                     <h4>Jefe Take Over 2</h4>
                     <p>2023 • Album</p>
+                    <button class="btn-album-comment" onclick="openQuickComment('alb-jto2', 'Jefe Take Over 2')">💬</button>
                 </div>
             </div>
         </section>
@@ -344,45 +350,50 @@
             </div>
 
             <div class="video-feed">
-                <div class="video-card" onclick="playVideo(this, 'IMboFsz0j-E')">
-                    <div class="video-thumb">
+                <div class="video-card">
+                    <div class="video-thumb" onclick="playVideo(this.closest('.video-card'), 'IMboFsz0j-E')">
                         <img src="https://img.youtube.com/vi/IMboFsz0j-E/hqdefault.jpg" alt="Chips" loading="lazy">
                         <span class="thumb-play">▶</span>
                     </div>
                     <h4>Chips (Official Video)</h4>
                     <p>45.2K views</p>
+                    <button class="btn-inline-comment" onclick="openQuickComment('vid-chips', 'Chips (Official Video)')">💬 Leave a comment</button>
                 </div>
-                <div class="video-card" onclick="playVideo(this, '16lSCZ960fg')">
-                    <div class="video-thumb">
+                <div class="video-card">
+                    <div class="video-thumb" onclick="playVideo(this.closest('.video-card'), '16lSCZ960fg')">
                         <img src="https://img.youtube.com/vi/16lSCZ960fg/hqdefault.jpg" alt="FREE SOS & FREE STAIN" loading="lazy">
                         <span class="thumb-play">▶</span>
                     </div>
                     <h4>FREE SOS & FREE STAIN</h4>
                     <p>Official Video</p>
+                    <button class="btn-inline-comment" onclick="openQuickComment('vid-free-sos', 'FREE SOS & FREE STAIN')">💬 Leave a comment</button>
                 </div>
-                <div class="video-card" onclick="playVideo(this, 'UVzRgrXVZzg')">
-                    <div class="video-thumb">
+                <div class="video-card">
+                    <div class="video-thumb" onclick="playVideo(this.closest('.video-card'), 'UVzRgrXVZzg')">
                         <img src="https://img.youtube.com/vi/UVzRgrXVZzg/hqdefault.jpg" alt="Let The Money Talk" loading="lazy">
                         <span class="thumb-play">▶</span>
                     </div>
                     <h4>Let The Money Talk</h4>
                     <p>Official Video</p>
+                    <button class="btn-inline-comment" onclick="openQuickComment('vid-money-talk', 'Let The Money Talk')">💬 Leave a comment</button>
                 </div>
-                <div class="video-card" onclick="playVideo(this, 'HnFqp5Ru2nQ')">
-                    <div class="video-thumb">
+                <div class="video-card">
+                    <div class="video-thumb" onclick="playVideo(this.closest('.video-card'), 'HnFqp5Ru2nQ')">
                         <img src="https://img.youtube.com/vi/HnFqp5Ru2nQ/hqdefault.jpg" alt="Back Outside" loading="lazy">
                         <span class="thumb-play">▶</span>
                     </div>
                     <h4>Back Outside</h4>
                     <p>Official Video</p>
+                    <button class="btn-inline-comment" onclick="openQuickComment('vid-back-outside', 'Back Outside')">💬 Leave a comment</button>
                 </div>
-                <div class="video-card" onclick="playVideo(this, 'FML0_PobbhA')">
-                    <div class="video-thumb">
+                <div class="video-card">
+                    <div class="video-thumb" onclick="playVideo(this.closest('.video-card'), 'FML0_PobbhA')">
                         <img src="https://img.youtube.com/vi/FML0_PobbhA/hqdefault.jpg" alt="Chicken Talk ft Chicken P" loading="lazy">
                         <span class="thumb-play">▶</span>
                     </div>
                     <h4>Chicken Talk ft Chicken P</h4>
                     <p>Official Video</p>
+                    <button class="btn-inline-comment" onclick="openQuickComment('vid-chicken-talk', 'Chicken Talk ft Chicken P')">💬 Leave a comment</button>
                 </div>
             </div>
         </section>
@@ -395,63 +406,140 @@
 
             <div class="social-links">
                 <a href="https://www.instagram.com/jreycash/" target="_blank" class="social-link instagram">
-                    <span class="social-icon">📸</span>
+                    <svg class="social-svg" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="url(#ig)" stroke-width="2"/><circle cx="12" cy="12" r="5" stroke="url(#ig)" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="url(#ig)"/><defs><linearGradient id="ig" x1="2" y1="22" x2="22" y2="2"><stop stop-color="#F58529"/><stop offset=".5" stop-color="#DD2A7B"/><stop offset="1" stop-color="#8134AF"/></linearGradient></defs></svg>
                     <span>Instagram</span>
                     <span class="social-handle">@jreycash</span>
                 </a>
                 <a href="https://open.spotify.com/artist/4EC8GXYTDjrBDN9iZJt8yI" target="_blank" class="social-link spotify">
-                    <span class="social-icon">🎧</span>
+                    <svg class="social-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1DB954"/><path d="M16.5 16.3c-.2 0-.3-.1-.5-.2-1.8-1.1-4-1.3-6.6-.7-.3.1-.5-.1-.6-.3-.1-.3.1-.5.3-.6 2.9-.6 5.4-.4 7.4.8.2.1.3.4.2.6-.1.2-.2.4-.2.4zm1.2-2.5c-.2 0-.3-.1-.5-.2-2.1-1.3-5.2-1.6-7.6-.9-.3.1-.6-.1-.7-.4-.1-.3.1-.6.4-.7 2.8-.8 6.2-.4 8.6 1 .3.2.4.5.2.8-.1.2-.3.4-.4.4zm.1-2.6c-2.5-1.5-6.6-1.6-9-.9-.3.1-.7-.1-.8-.4-.1-.3.1-.7.4-.8 2.7-.8 7.2-.7 10.1 1 .3.2.4.6.2.9-.2.3-.6.4-.9.2z" fill="white"/></svg>
                     <span>Spotify</span>
                     <span class="social-handle">Jrey Cash</span>
                 </a>
                 <a href="https://music.apple.com/us/artist/jrey-cash/1112364392" target="_blank" class="social-link apple">
-                    <span class="social-icon">🍎</span>
+                    <svg class="social-svg" viewBox="0 0 24 24"><path d="M18.7 12.5c0-2.1 1.7-3.1 1.8-3.2-1-1.5-2.5-1.7-3-1.7-1.3-.1-2.5.8-3.1.8s-1.6-.7-2.7-.7c-1.4 0-2.6.8-3.3 2-1.4 2.5-.4 6.1 1 8.1.7 1 1.5 2.1 2.5 2 1-.1 1.4-.6 2.6-.6s1.6.6 2.7.6 1.8-1 2.4-2c.8-1.1 1.1-2.2 1.1-2.3 0 0-2-1-2-3zM16.8 5.8c.5-.7.9-1.6.8-2.5-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.4.9.1 1.7-.4 2.3-1.1z" fill="#fc3c44"/></svg>
                     <span>Apple Music</span>
                     <span class="social-handle">Jrey Cash</span>
                 </a>
                 <a href="https://soundcloud.com/jreycash" target="_blank" class="social-link soundcloud">
-                    <span class="social-icon">☁️</span>
+                    <svg class="social-svg" viewBox="0 0 24 24"><path d="M1 18V14h1v4H1zm2.5-5v5H4.5v-5H3.5zM6 11v7h1v-7H6zm2.5-1v8H9.5v-8H8.5zM11 8v10h1V8h-1zm2.5 0c0 0 0 10 0 10h1V8.5c-.3-.3-.6-.5-1-.5zm2.5-.5V18h5c1.7 0 3-1.3 3-3s-1.3-3-3-3c-.5 0-1 .1-1.4.4C18.3 9.8 16.8 8 15 7.6v-.1z" fill="#FF5500"/></svg>
                     <span>SoundCloud</span>
                     <span class="social-handle">jreycash</span>
                 </a>
                 <a href="https://www.youtube.com/@jreycash" target="_blank" class="social-link youtube">
-                    <span class="social-icon">▶️</span>
+                    <svg class="social-svg" viewBox="0 0 24 24"><path d="M23.5 6.2c-.3-1-1-1.8-2-2.1C19.6 3.5 12 3.5 12 3.5s-7.6 0-9.5.6c-1 .3-1.7 1.1-2 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8c.3 1 1 1.8 2 2.1 1.9.6 9.5.6 9.5.6s7.6 0 9.5-.6c1-.3 1.7-1.1 2-2.1.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.6V8.4L16 12l-6.5 3.6z" fill="#FF0000"/></svg>
                     <span>YouTube</span>
                     <span class="social-handle">Jrey Cash</span>
                 </a>
             </div>
         </section>
 
-        <!-- Comments Modal -->
-        <div id="comments-modal" class="comments-modal" style="display:none;">
-            <div class="comments-panel">
-                <div class="comments-header">
-                    <h3>Comments</h3>
-                    <button onclick="closeComments()">✕</button>
+        <!-- Quick Comment Popup -->
+        <div id="quick-comment-popup" class="quick-comment-popup" style="display:none;">
+            <div class="qc-panel">
+                <div class="qc-header">
+                    <div>
+                        <span class="qc-label">Commenting on</span>
+                        <h4 id="qc-content-title"></h4>
+                    </div>
+                    <button onclick="closeQuickComment()">✕</button>
                 </div>
-                <div class="comments-list" id="comments-list">
-                    <div class="comment">
-                        <strong>JefeGang_Nate</strong>
-                        <p>This is heat 🔥🔥🔥</p>
-                        <span class="comment-time">2h ago</span>
-                    </div>
-                    <div class="comment">
-                        <strong>UpstateQueen</strong>
-                        <p>Buffalo stand up!! Jrey never misses</p>
-                        <span class="comment-time">5h ago</span>
-                    </div>
-                    <div class="comment">
-                        <strong>BuffaloFan716</strong>
-                        <p>Been waiting for this drop 💎</p>
-                        <span class="comment-time">1d ago</span>
-                    </div>
-                </div>
-                <div class="comment-input">
-                    <input type="text" placeholder="Add a comment..." id="comment-text">
-                    <button onclick="postComment()">Send</button>
+                <textarea id="qc-text" maxlength="250" placeholder="Drop your thoughts... (250 chars max)"></textarea>
+                <div class="qc-footer">
+                    <span class="qc-charcount"><span id="qc-chars">0</span>/250</span>
+                    <button class="qc-submit" onclick="submitQuickComment()">Post</button>
                 </div>
             </div>
         </div>
+
+        <!-- Section: Community Thread (Reddit-style) -->
+        <section class="section" id="community">
+            <div class="section-header">
+                <h2>Community</h2>
+                <span class="section-badge">LIVE</span>
+            </div>
+
+            <div class="thread-feed" id="thread-feed">
+                <div class="thread-post">
+                    <div class="thread-left">
+                        <button class="thread-heart liked" onclick="toggleThreadHeart(this)">♥</button>
+                        <span class="thread-likes">24</span>
+                    </div>
+                    <div class="thread-body">
+                        <div class="thread-meta">
+                            <strong class="thread-author">BuffaloFan716</strong>
+                            <span class="thread-tag">🎬 Chips (Official Video)</span>
+                            <span class="thread-time">2h ago</span>
+                        </div>
+                        <p class="thread-text">This video never gets old. Jrey snapped on this one, the whole squad vibing 🔥🔥</p>
+                        <button class="thread-reply-btn" onclick="openQuickComment('vid-chips', 'Chips (Official Video)')">↩ Reply</button>
+                    </div>
+                </div>
+
+                <div class="thread-post">
+                    <div class="thread-left">
+                        <button class="thread-heart" onclick="toggleThreadHeart(this)">♡</button>
+                        <span class="thread-likes">18</span>
+                    </div>
+                    <div class="thread-body">
+                        <div class="thread-meta">
+                            <strong class="thread-author">JefeGang_Nate</strong>
+                            <span class="thread-tag">💿 The Biggest Member 4</span>
+                            <span class="thread-time">5h ago</span>
+                        </div>
+                        <p class="thread-text">Album of the year no debate. Every track hits different 💎</p>
+                        <button class="thread-reply-btn" onclick="openQuickComment('alb-tbm4', 'The Biggest Member 4')">↩ Reply</button>
+                    </div>
+                </div>
+
+                <div class="thread-post">
+                    <div class="thread-left">
+                        <button class="thread-heart" onclick="toggleThreadHeart(this)">♡</button>
+                        <span class="thread-likes">12</span>
+                    </div>
+                    <div class="thread-body">
+                        <div class="thread-meta">
+                            <strong class="thread-author">UpstateQueen</strong>
+                            <span class="thread-tag">🎤 Studio Freestyle (Raw)</span>
+                            <span class="thread-time">1d ago</span>
+                        </div>
+                        <p class="thread-text">Need more of these studio sessions. Raw and uncut is where Jrey really shines 🎙️</p>
+                        <button class="thread-reply-btn" onclick="openQuickComment('exc-studio-freestyle', 'Studio Freestyle (Raw)')">↩ Reply</button>
+                    </div>
+                </div>
+
+                <div class="thread-post">
+                    <div class="thread-left">
+                        <button class="thread-heart" onclick="toggleThreadHeart(this)">♡</button>
+                        <span class="thread-likes">9</span>
+                    </div>
+                    <div class="thread-body">
+                        <div class="thread-meta">
+                            <strong class="thread-author">CashMob_BK</strong>
+                            <span class="thread-tag">🛍️ CA$H Hoodie</span>
+                            <span class="thread-time">2d ago</span>
+                        </div>
+                        <p class="thread-text">Just copped the hoodie. Quality is insane, fits perfect. Need more colorways 🔥</p>
+                        <button class="thread-reply-btn" onclick="openQuickComment('merch-hoodie', 'CA$H Hoodie')">↩ Reply</button>
+                    </div>
+                </div>
+
+                <div class="thread-post">
+                    <div class="thread-left">
+                        <button class="thread-heart" onclick="toggleThreadHeart(this)">♡</button>
+                        <span class="thread-likes">7</span>
+                    </div>
+                    <div class="thread-body">
+                        <div class="thread-meta">
+                            <strong class="thread-author">716Drilla</strong>
+                            <span class="thread-tag">🎵 Let The Money Talk</span>
+                            <span class="thread-time">3d ago</span>
+                        </div>
+                        <p class="thread-text">Buffalo anthem right here. This should be on the radio fr fr 📻</p>
+                        <button class="thread-reply-btn" onclick="openQuickComment('vid-money-talk', 'Let The Money Talk')">↩ Reply</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
@@ -467,9 +555,9 @@
                 <span class="nav-icon">🏆</span>
                 Prestige
             </a>
-            <a href="#" class="nav-item" onclick="scrollToSection(event, 'music')">
-                <span class="nav-icon">🎵</span>
-                Music
+            <a href="#" class="nav-item" onclick="scrollToSection(event, 'community')">
+                <span class="nav-icon">💬</span>
+                Thread
             </a>
             <a href="#" class="nav-item" onclick="accessPortal(event)">
                 <span class="nav-icon">🔒</span>

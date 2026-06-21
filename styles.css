@@ -806,6 +806,8 @@ img.album-art {
 
 .social-icon { font-size: 1.2rem; width: 28px; text-align: center; }
 
+.social-svg { width: 24px; height: 24px; flex-shrink: 0; }
+
 .social-link span:nth-child(2) {
     font-weight: 600;
     font-size: 0.9rem;
@@ -1106,6 +1108,233 @@ img.album-art {
 .btn-action.green { border-color: var(--neon-green); color: var(--neon-green); }
 
 .btn-action:active { background: rgba(255, 0, 255, 0.1); }
+
+/* ── Inline Comment Buttons ── */
+.btn-inline-comment {
+    display: block;
+    width: calc(100% - 28px);
+    margin: 0 14px 12px;
+    padding: 8px;
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.btn-inline-comment:active {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+}
+
+.btn-album-comment {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    cursor: pointer;
+    margin-top: 4px;
+    padding: 2px 0;
+    transition: color 0.2s;
+}
+
+.btn-album-comment:active { color: var(--neon-cyan); }
+
+/* ── Quick Comment Popup ── */
+.quick-comment-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.qc-panel {
+    width: 100%;
+    max-width: 360px;
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.qc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.qc-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.qc-header h4 {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    margin-top: 2px;
+}
+
+.qc-header button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px;
+}
+
+#qc-text {
+    width: 100%;
+    min-height: 80px;
+    padding: 14px 16px;
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    resize: none;
+    outline: none;
+}
+
+#qc-text::placeholder { color: var(--text-dim); }
+
+.qc-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    border-top: 1px solid var(--glass-border);
+}
+
+.qc-charcount {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+}
+
+.qc-submit {
+    background: var(--neon-cyan);
+    color: var(--bg-dark);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 22px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.qc-submit:active { opacity: 0.8; }
+
+/* ── Community Thread (Reddit-style) ── */
+.thread-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.thread-post {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+}
+
+.thread-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 28px;
+}
+
+.thread-heart {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.thread-heart.liked {
+    color: var(--neon-magenta);
+}
+
+.thread-heart:active { transform: scale(1.3); }
+
+.thread-likes {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.thread-body { flex: 1; min-width: 0; }
+
+.thread-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.thread-author {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: var(--neon-cyan);
+}
+
+.thread-tag {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--glass-border);
+}
+
+.thread-time {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+}
+
+.thread-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-light);
+    margin-bottom: 6px;
+    word-wrap: break-word;
+}
+
+.thread-reply-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.thread-reply-btn:active { color: var(--neon-cyan); }
 
 /* ── Responsive: Tablet+ ── */
 @media (min-width: 600px) {

@@ -383,6 +383,115 @@ function timeAgo(date) {
     return date.toLocaleDateString();
 }
 
+// ── Quick Comment Popup ──
+let qcContentId = null;
+let qcContentTitle = null;
+
+function openQuickComment(contentId, contentTitle) {
+    qcContentId = contentId;
+    qcContentTitle = contentTitle;
+    document.getElementById('qc-content-title').textContent = contentTitle;
+    document.getElementById('qc-text').value = '';
+    document.getElementById('qc-chars').textContent = '0';
+    document.getElementById('quick-comment-popup').style.display = 'flex';
+    setTimeout(function() { document.getElementById('qc-text').focus(); }, 100);
+}
+
+function closeQuickComment() {
+    document.getElementById('quick-comment-popup').style.display = 'none';
+    qcContentId = null;
+    qcContentTitle = null;
+}
+
+function submitQuickComment() {
+    var textarea = document.getElementById('qc-text');
+    var text = textarea.value.trim();
+    if (!text || !qcContentId) return;
+
+    var displayName = currentUser ? currentUser.displayName : 'Fan';
+
+    if (db && currentUser && currentUser.uid !== 'demo') {
+        db.collection('community_thread').add({
+            contentId: qcContentId,
+            contentTitle: qcContentTitle,
+            userId: currentUser.uid,
+            displayName: displayName,
+            text: text,
+            likes: 0,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(function(err) { console.warn('Thread post failed:', err.message); });
+    }
+
+    addThreadPost(displayName, qcContentTitle, text);
+    closeQuickComment();
+    trackPrestige('comment');
+
+    var communitySection = document.getElementById('community');
+    if (communitySection) {
+        communitySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function addThreadPost(author, contentTitle, text) {
+    var feed = document.getElementById('thread-feed');
+    if (!feed) return;
+
+    var post = document.createElement('div');
+    post.className = 'thread-post';
+    post.style.borderColor = 'rgba(0, 243, 255, 0.3)';
+    setTimeout(function() { post.style.borderColor = ''; }, 3000);
+
+    var tagIcon = '💬';
+    if (contentTitle.toLowerCase().includes('video') || contentTitle.toLowerCase().includes('chips') ||
+        contentTitle.toLowerCase().includes('talk') || contentTitle.toLowerCase().includes('outside') ||
+        contentTitle.toLowerCase().includes('stain')) tagIcon = '🎬';
+    else if (contentTitle.toLowerCase().includes('member') || contentTitle.toLowerCase().includes('jefe') ||
+             contentTitle.toLowerCase().includes('deluxe')) tagIcon = '💿';
+    else if (contentTitle.toLowerCase().includes('hoodie') || contentTitle.toLowerCase().includes('tee') ||
+             contentTitle.toLowerCase().includes('merch') || contentTitle.toLowerCase().includes('snapback')) tagIcon = '🛍️';
+
+    post.innerHTML =
+        '<div class="thread-left">' +
+            '<button class="thread-heart liked" onclick="toggleThreadHeart(this)">♥</button>' +
+            '<span class="thread-likes">1</span>' +
+        '</div>' +
+        '<div class="thread-body">' +
+            '<div class="thread-meta">' +
+                '<strong class="thread-author">' + escapeHtml(author) + '</strong>' +
+                '<span class="thread-tag">' + tagIcon + ' ' + escapeHtml(contentTitle) + '</span>' +
+                '<span class="thread-time">Just now</span>' +
+            '</div>' +
+            '<p class="thread-text">' + escapeHtml(text) + '</p>' +
+            '<button class="thread-reply-btn" onclick="openQuickComment(\'' + escapeHtml(contentTitle).replace(/'/g, "\\'") + '\', \'' + escapeHtml(contentTitle).replace(/'/g, "\\'") + '\')">↩ Reply</button>' +
+        '</div>';
+
+    feed.insertBefore(post, feed.firstChild);
+}
+
+function toggleThreadHeart(btn) {
+    var likesEl = btn.nextElementSibling;
+    var count = parseInt(likesEl.textContent);
+    if (btn.classList.contains('liked')) {
+        btn.classList.remove('liked');
+        btn.textContent = '♡';
+        likesEl.textContent = Math.max(0, count - 1);
+    } else {
+        btn.classList.add('liked');
+        btn.textContent = '♥';
+        likesEl.textContent = count + 1;
+        trackPrestige('like');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var textarea = document.getElementById('qc-text');
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            document.getElementById('qc-chars').textContent = this.value.length;
+        });
+    }
+});
+
 // ── Video Player (lazy iframe load on tap) ──
 function playVideo(card, videoId) {
     const thumbEl = card.querySelector('.video-thumb');
