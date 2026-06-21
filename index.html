@@ -438,6 +438,95 @@
             </div>
         </section>
 
+        <!-- Section: Fan Art Gallery -->
+        <section class="section" id="fanart">
+            <div class="section-header">
+                <h2>Fan Art</h2>
+                <span class="section-badge">GALLERY</span>
+            </div>
+
+            <button class="btn-upload-art" onclick="openArtUpload()">🎨 Upload Your Art</button>
+
+            <div class="fanart-grid" id="fanart-grid">
+                <!-- Hardcoded Jrey Cash submissions -->
+                <div class="fanart-card owner-post">
+                    <div class="fanart-image">
+                        <img src="assets/fanart-neon-suit.png" alt="Neon Suit" loading="lazy">
+                    </div>
+                    <div class="fanart-info">
+                        <div class="fanart-meta">
+                            <img class="fanart-avatar" src="assets/jreycash-hero.png" referrerpolicy="no-referrer">
+                            <div>
+                                <strong class="owner-name">JREY CASH</strong>
+                                <span class="owner-badge">👑 ARTIST</span>
+                                <p class="fanart-date">Jun 2026</p>
+                            </div>
+                        </div>
+                        <p class="fanart-caption">GQ meets the streets. Neon nights in Buffalo. 🌃</p>
+                        <div class="fanart-actions">
+                            <button class="btn-like" onclick="toggleLike(this, 'fanart-neon-suit')">
+                                <span class="like-icon">♡</span>
+                                <span class="like-count">47</span>
+                            </button>
+                            <button class="btn-comment" onclick="openQuickComment('fanart-neon-suit', 'Fan Art: Neon Suit')">💬 Comment</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fanart-card owner-post">
+                    <div class="fanart-image">
+                        <img src="assets/jreycash-hero.png" alt="JC100 Bill" loading="lazy">
+                    </div>
+                    <div class="fanart-info">
+                        <div class="fanart-meta">
+                            <img class="fanart-avatar" src="assets/jreycash-hero.png" referrerpolicy="no-referrer">
+                            <div>
+                                <strong class="owner-name">JREY CASH</strong>
+                                <span class="owner-badge">👑 ARTIST</span>
+                                <p class="fanart-date">Jun 2026</p>
+                            </div>
+                        </div>
+                        <p class="fanart-caption">The JC100. Buffalo currency. 💵🦬</p>
+                        <div class="fanart-actions">
+                            <button class="btn-like" onclick="toggleLike(this, 'fanart-jc100')">
+                                <span class="like-icon">♡</span>
+                                <span class="like-count">92</span>
+                            </button>
+                            <button class="btn-comment" onclick="openQuickComment('fanart-jc100', 'Fan Art: JC100 Bill')">💬 Comment</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Firestore fan submissions load here -->
+                <div id="fanart-firestore"></div>
+            </div>
+        </section>
+
+        <!-- Art Upload Modal -->
+        <div id="art-upload-modal" class="quick-comment-popup" style="display:none;">
+            <div class="qc-panel" style="max-width:400px;">
+                <div class="qc-header">
+                    <div>
+                        <span class="qc-label">Upload Fan Art</span>
+                        <h4 style="color:var(--neon-magenta);">Share your art with the community</h4>
+                    </div>
+                    <button onclick="closeArtUpload()">✕</button>
+                </div>
+                <div style="padding:14px 16px;">
+                    <input type="file" id="art-file" accept="image/*" style="display:none;" onchange="previewArt(this)">
+                    <div id="art-preview-area" class="art-preview-area" onclick="document.getElementById('art-file').click()">
+                        <span>📸</span>
+                        <p>Tap to select image</p>
+                    </div>
+                    <input type="text" id="art-caption" placeholder="Add a caption..." maxlength="150" style="width:100%;padding:10px 14px;background:var(--bg-card);border:1px solid var(--glass-border);border-radius:8px;color:var(--text-light);font-size:0.85rem;margin-top:10px;outline:none;">
+                </div>
+                <div class="qc-footer">
+                    <span style="font-size:0.7rem;color:var(--text-dim);">🎨 +25 prestige for uploading art</span>
+                    <button class="qc-submit" onclick="submitFanArt()" style="background:var(--neon-magenta);">Upload</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Section: Connect -->
         <section class="section" id="connect">
             <div class="section-header">

@@ -1381,6 +1381,121 @@ img.album-art {
 
 .thread-reply-btn:active { color: var(--neon-cyan); }
 
+/* ── Fan Art Gallery ── */
+.btn-upload-art {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 243, 255, 0.1));
+    border: 1px dashed var(--neon-magenta);
+    border-radius: var(--radius);
+    color: var(--neon-magenta);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: all 0.2s;
+}
+
+.btn-upload-art:active { background: rgba(255, 0, 255, 0.15); }
+
+.fanart-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.fanart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.fanart-image {
+    width: 100%;
+    max-height: 400px;
+    overflow: hidden;
+}
+
+.fanart-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    max-height: 400px;
+}
+
+.fanart-info { padding: 14px 16px; }
+
+.fanart-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.fanart-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.fanart-meta strong {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    display: block;
+}
+
+.fanart-date {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.fanart-caption {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.fanart-actions {
+    display: flex;
+    gap: 14px;
+}
+
+.fanart-actions .btn-comment {
+    font-size: 0.8rem;
+}
+
+.art-preview-area {
+    width: 100%;
+    height: 160px;
+    border: 1px dashed var(--glass-border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.art-preview-area:active { border-color: var(--neon-magenta); }
+
+.art-preview-area span { font-size: 2rem; }
+
+.art-preview-area img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 /* ── Install App Banner ── */
 .install-banner {
     position: fixed;

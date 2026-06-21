@@ -94,6 +94,7 @@ function handleSignIn(user) {
     loadLeaderboard();
     loadLiveCommunityFeed();
     loadNotifications();
+    loadFanArtGallery();
 }
 
 function signOut() {
@@ -305,7 +306,7 @@ function postComment() {
 
 // ── Prestige System ──
 var prestigePoints = parseInt(localStorage.getItem('jc_prestige') || '0');
-var PRESTIGE_ACTIONS = { login: 10, like: 2, comment: 5, view_comments: 1, purchase: 50, watch_video: 3, store_visit: 2 };
+var PRESTIGE_ACTIONS = { login: 10, like: 2, comment: 5, view_comments: 1, purchase: 50, watch_video: 3, store_visit: 2, fan_art: 25 };
 
 function trackPrestige(action) {
     var points = PRESTIGE_ACTIONS[action] || 0;
@@ -582,6 +583,143 @@ function loadNotifications() {
                 }
             });
         }, function() {});
+}
+
+// ── Fan Art ──
+var artFileData = null;
+
+function openArtUpload() {
+    if (!currentUser) { alert('Sign in to upload art.'); return; }
+    document.getElementById('art-upload-modal').style.display = 'flex';
+    document.getElementById('art-caption').value = '';
+    artFileData = null;
+    document.getElementById('art-preview-area').innerHTML = '<span>📸</span><p>Tap to select image</p>';
+}
+
+function closeArtUpload() {
+    document.getElementById('art-upload-modal').style.display = 'none';
+    artFileData = null;
+}
+
+function previewArt(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            artFileData = e.target.result;
+            document.getElementById('art-preview-area').innerHTML = '<img src="' + artFileData + '">';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function submitFanArt() {
+    if (!artFileData) { alert('Please select an image.'); return; }
+    var caption = document.getElementById('art-caption').value.trim() || '';
+
+    if (db && currentUser && currentUser.uid !== 'demo') {
+        db.collection('fan_art').add({
+            userId: currentUser.uid,
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL || '',
+            isOwner: isOwner,
+            imageData: artFileData,
+            caption: caption,
+            likes: 0,
+            likedBy: [],
+            likedByOwner: false,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(function() {
+            trackPrestige('fan_art');
+            closeArtUpload();
+            showActivityToast('🎨 Your art has been uploaded! +25 prestige');
+        }).catch(function(err) {
+            console.error('Art upload failed:', err.message);
+            alert('Upload failed. Image may be too large — try a smaller file.');
+        });
+    } else {
+        addLocalFanArt(currentUser.displayName, currentUser.photoURL, artFileData, caption);
+        trackPrestige('fan_art');
+        closeArtUpload();
+    }
+}
+
+function addLocalFanArt(name, photoURL, imgData, caption) {
+    var grid = document.getElementById('fanart-firestore');
+    var card = document.createElement('div');
+    card.className = 'fanart-card';
+    card.style.borderColor = 'rgba(0, 243, 255, 0.3)';
+    setTimeout(function() { card.style.borderColor = ''; }, 3000);
+    var avatarHtml = photoURL ? '<img class="fanart-avatar" src="' + photoURL + '" referrerpolicy="no-referrer">' : '<div class="fanart-avatar" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--neon-cyan),var(--neon-magenta));display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;">' + (name || '?').charAt(0) + '</div>';
+    card.innerHTML = '<div class="fanart-image"><img src="' + imgData + '"></div><div class="fanart-info"><div class="fanart-meta">' + avatarHtml + '<div><strong>' + escapeHtml(name) + '</strong><p class="fanart-date">Just now</p></div></div><p class="fanart-caption">' + escapeHtml(caption) + '</p><div class="fanart-actions"><button class="btn-like" onclick="toggleLike(this,\'fanart-new\')"><span class="like-icon">♡</span><span class="like-count">0</span></button><button class="btn-comment" onclick="openQuickComment(\'fanart-new\',\'Fan Art\')">💬 Comment</button></div></div>';
+    grid.insertBefore(card, grid.firstChild);
+}
+
+function loadFanArtGallery() {
+    if (!db) return;
+    var container = document.getElementById('fanart-firestore');
+    if (!container) return;
+
+    db.collection('fan_art').orderBy('timestamp', 'desc').limit(20)
+        .onSnapshot(function(snapshot) {
+            container.innerHTML = '';
+            snapshot.forEach(function(doc) {
+                var d = doc.data();
+                var docId = doc.id;
+                var timeStr = d.timestamp ? timeAgo(d.timestamp.toDate()) : 'Just now';
+                var ownerBadge = d.isOwner ? '<span class="owner-badge">👑 ARTIST</span>' : '';
+                var nameClass = d.isOwner ? ' owner-name' : '';
+                var cardClass = d.isOwner ? ' owner-post' : '';
+                var ownerLike = d.likedByOwner ? '<div class="owner-liked">👑 Liked by JREY CASH</div>' : '';
+                var avatarSrc = d.photoURL || '';
+                var avatarHtml = avatarSrc ? '<img class="fanart-avatar" src="' + avatarSrc + '" referrerpolicy="no-referrer">' : '<div class="fanart-avatar" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--neon-cyan),var(--neon-magenta));display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;">' + (d.displayName || '?').charAt(0) + '</div>';
+                var isLiked = d.likedBy && currentUser && d.likedBy.indexOf(currentUser.uid) >= 0;
+
+                var card = document.createElement('div');
+                card.className = 'fanart-card' + cardClass;
+                card.innerHTML = '<div class="fanart-image"><img src="' + d.imageData + '" loading="lazy"></div>' +
+                    '<div class="fanart-info"><div class="fanart-meta">' + avatarHtml + '<div><strong class="' + nameClass + '">' + escapeHtml(d.displayName || 'Fan') + '</strong>' + ownerBadge + '<p class="fanart-date">' + timeStr + '</p></div></div>' +
+                    '<p class="fanart-caption">' + escapeHtml(d.caption || '') + '</p>' +
+                    ownerLike +
+                    '<div class="fanart-actions"><button class="btn-like' + (isLiked ? ' liked' : '') + '" onclick="heartFanArt(\'' + docId + '\',this)"><span class="like-icon">' + (isLiked ? '♥' : '♡') + '</span><span class="like-count">' + (d.likes || 0) + '</span></button><button class="btn-comment" onclick="openQuickComment(\'fanart-' + docId + '\',\'Fan Art by ' + escapeHtml(d.displayName || 'Fan') + '\')">💬 Comment</button></div></div>';
+                container.appendChild(card);
+            });
+
+            snapshot.docChanges().forEach(function(change) {
+                if (change.type === 'added' && !change.doc.metadata.hasPendingWrites) {
+                    var d = change.doc.data();
+                    if (d.timestamp && currentUser && d.userId !== currentUser.uid) {
+                        showActivityToast('🎨 ' + (d.displayName || 'Someone') + ' shared new fan art!');
+                    }
+                }
+            });
+        });
+}
+
+function heartFanArt(docId, btn) {
+    if (!db || !currentUser) return;
+    var likesEl = btn.querySelector('.like-count');
+    var iconEl = btn.querySelector('.like-icon');
+    var liked = btn.classList.contains('liked');
+    var ref = db.collection('fan_art').doc(docId);
+
+    if (liked) {
+        btn.classList.remove('liked');
+        iconEl.textContent = '♡';
+        ref.update({ likes: firebase.firestore.FieldValue.increment(-1), likedBy: firebase.firestore.FieldValue.arrayRemove(currentUser.uid) });
+        if (isOwner) ref.update({ likedByOwner: false });
+    } else {
+        btn.classList.add('liked');
+        iconEl.textContent = '♥';
+        ref.update({ likes: firebase.firestore.FieldValue.increment(1), likedBy: firebase.firestore.FieldValue.arrayUnion(currentUser.uid) });
+        if (isOwner) ref.update({ likedByOwner: true });
+        trackPrestige('like');
+
+        ref.get().then(function(doc) {
+            if (doc.exists && doc.data().userId !== currentUser.uid) {
+                createNotification('heart', doc.data().userId, currentUser.displayName, '', 'your fan art');
+            }
+        });
+    }
 }
 
 // ── Exclusive Video Player ──
