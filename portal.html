@@ -447,7 +447,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
-        var portalDb;
+        var portalDb, portalAuth;
         try {
             if (!firebase.apps.length) {
                 firebase.initializeApp({
@@ -460,7 +460,30 @@
                 });
             }
             portalDb = firebase.firestore();
-        } catch(e) {}
+            portalAuth = firebase.auth();
+        } catch(e) { console.warn('Firebase init failed:', e); }
+
+        // Wait for auth before loading Firestore data
+        var portalDataLoaded = false;
+        if (portalAuth) {
+            portalAuth.onAuthStateChanged(function(user) {
+                if (user && !portalDataLoaded) {
+                    portalDataLoaded = true;
+                    console.log('Portal authenticated as:', user.email);
+                    loadNdaLog();
+                    loadMemberAnalytics();
+                } else if (!user) {
+                    console.log('Portal: No auth session. Signing in silently...');
+                    portalAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(function() {
+                        console.log('Portal signed in');
+                    }).catch(function(err) {
+                        console.warn('Portal auth failed:', err.message);
+                        setStatFallback();
+                        document.getElementById('nda-log').innerHTML = '<p style="color:var(--neon-magenta);font-size:0.8rem;">Sign in required. <a href="#" onclick="portalAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())" style="color:var(--neon-cyan);">Click here to authenticate</a></p>';
+                    });
+                }
+            });
+        }
 
         function setTimeFilter(btn) {
             document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
@@ -540,8 +563,7 @@
             });
         }
 
-        loadNdaLog();
-        loadMemberAnalytics();
+        // Data loading is now triggered by onAuthStateChanged above
 
         var allMembers = [];
 
