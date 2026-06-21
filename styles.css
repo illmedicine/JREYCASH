@@ -548,18 +548,14 @@ h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
     scroll-snap-align: start;
 }
 
-.album-art {
+img.album-art {
     width: 140px;
     height: 140px;
     border-radius: var(--radius-sm);
     margin-bottom: 8px;
+    object-fit: cover;
+    display: block;
 }
-
-.gradient-1 { background: linear-gradient(135deg, #1a1a2e, var(--neon-cyan), #16213e); }
-.gradient-2 { background: linear-gradient(135deg, #2d132c, var(--neon-magenta), #1a1a2e); }
-.gradient-3 { background: linear-gradient(135deg, #0f3460, var(--neon-green), #1a1a2e); }
-.gradient-4 { background: linear-gradient(135deg, #1a1a2e, var(--neon-orange), #2d132c); }
-.gradient-5 { background: linear-gradient(135deg, #16213e, var(--neon-pink), #0f3460); }
 
 .album-card h4 {
     font-family: 'Inter', sans-serif;
