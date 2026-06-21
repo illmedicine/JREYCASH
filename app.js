@@ -614,8 +614,73 @@ function initLiveCommunityFeed() {
         });
 }
 
+// ── PWA Install ──
+var deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    showInstallBanner();
+});
+
+function showInstallBanner() {
+    if (localStorage.getItem('jc_install_dismissed')) return;
+    var banner = document.getElementById('install-banner');
+    if (banner) banner.style.display = 'block';
+}
+
+function installApp() {
+    if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then(function(result) {
+            if (result.outcome === 'accepted') {
+                console.log('App installed');
+            }
+            deferredInstallPrompt = null;
+            dismissInstall();
+        });
+    } else {
+        var ua = navigator.userAgent;
+        if (/iPhone|iPad|iPod/.test(ua)) {
+            alert('To install:\n1. Tap the Share button (box with arrow)\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add"');
+        } else {
+            alert('To install:\n1. Tap the browser menu (⋮)\n2. Tap "Add to Home Screen" or "Install App"\n3. Confirm');
+        }
+    }
+}
+
+function dismissInstall() {
+    var banner = document.getElementById('install-banner');
+    if (banner) banner.style.display = 'none';
+    localStorage.setItem('jc_install_dismissed', '1');
+}
+
+// Show banner on iOS (no beforeinstallprompt event)
+function checkIOSInstall() {
+    var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    var isStandalone = window.navigator.standalone === true;
+    if (isIOS && !isStandalone && !localStorage.getItem('jc_install_dismissed')) {
+        var banner = document.getElementById('install-banner');
+        if (banner) {
+            banner.style.display = 'block';
+            var btn = document.getElementById('install-btn');
+            if (btn) btn.textContent = 'How to Install';
+        }
+    }
+}
+
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(function() {
+        console.log('Service Worker registered');
+    }).catch(function(err) {
+        console.warn('SW registration failed:', err.message);
+    });
+}
+
 // Init on load
 document.addEventListener('DOMContentLoaded', function() {
     updatePrestigeDisplay();
     initLiveCommunityFeed();
+    checkIOSInstall();
 });

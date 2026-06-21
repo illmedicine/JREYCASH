@@ -6,8 +6,25 @@
     <title>JREY CASH | Store</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
 </head>
 <body>
+
+    <div id="install-banner" class="install-banner" style="display:none;">
+        <div class="install-banner-content">
+            <img src="assets/jreycash-hero.png" alt="Jrey Cash" class="install-icon">
+            <div class="install-text">
+                <strong>Get the JREY CA$H App</strong>
+                <p>Install for the full experience</p>
+            </div>
+            <button class="install-btn" id="install-btn" onclick="installApp()">Install</button>
+            <button class="install-close" onclick="dismissInstall()">✕</button>
+        </div>
+    </div>
 
     <header class="top-bar">
         <div class="top-logo">
