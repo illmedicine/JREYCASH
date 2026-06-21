@@ -297,90 +297,58 @@
         </div>
     </div>
 
-    <!-- Demographics -->
-    <p class="analytics-section-title">Fan Demographics</p>
+    <!-- Demographics (Live from Firestore) -->
+    <p class="analytics-section-title">📍 Fan Demographics — Live</p>
     <div class="action-section" style="margin-bottom: 24px;">
         <table class="demo-table">
             <thead>
                 <tr>
-                    <th>City</th>
-                    <th>Users</th>
-                    <th>Avg Listen/Day</th>
-                    <th>Top Track</th>
+                    <th>Location</th>
+                    <th>Members</th>
+                    <th>Logins</th>
+                    <th>Engagement</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Buffalo, NY</strong></td>
-                    <td>482</td>
-                    <td>23 min</td>
-                    <td style="color: var(--neon-cyan);">Chips</td>
-                </tr>
-                <tr>
-                    <td><strong>New York, NY</strong></td>
-                    <td>318</td>
-                    <td>18 min</td>
-                    <td style="color: var(--neon-cyan);">Let the Money Talk</td>
-                </tr>
-                <tr>
-                    <td><strong>Rochester, NY</strong></td>
-                    <td>201</td>
-                    <td>15 min</td>
-                    <td style="color: var(--neon-cyan);">Chicken Talk</td>
-                </tr>
-                <tr>
-                    <td><strong>Atlanta, GA</strong></td>
-                    <td>145</td>
-                    <td>12 min</td>
-                    <td style="color: var(--neon-cyan);">Chips</td>
-                </tr>
-                <tr>
-                    <td><strong>Toronto, ON</strong></td>
-                    <td>89</td>
-                    <td>10 min</td>
-                    <td style="color: var(--neon-cyan);">Fantasy Remix</td>
-                </tr>
+            <tbody id="demo-table-body">
+                <tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Loading location data...</td></tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Age & Gender -->
+    <!-- Geographic Breakdown -->
     <div class="dashboard-grid" style="margin-bottom: 24px;">
         <div class="stat-card">
-            <span class="stat-title">Top Age Group</span>
-            <span class="stat-value" style="font-size: 1.4rem;">18-24</span>
-            <span class="stat-trend">42% of listeners</span>
+            <span class="stat-title">Countries Reached</span>
+            <span class="stat-value" style="font-size: 1.4rem;" id="stat-countries">—</span>
+            <span class="stat-trend" id="stat-countries-list">Loading...</span>
         </div>
         <div class="stat-card">
-            <span class="stat-title">Peak Hours</span>
-            <span class="stat-value" style="font-size: 1.4rem;">9PM-1AM</span>
-            <span class="stat-trend">Late night dominates</span>
+            <span class="stat-title">Top City</span>
+            <span class="stat-value" style="font-size: 1.2rem;color:var(--neon-cyan);" id="stat-top-city">—</span>
+            <span class="stat-trend" id="stat-top-city-count">Loading...</span>
         </div>
         <div class="stat-card">
-            <span class="stat-title">Avg Session</span>
-            <span class="stat-value" style="font-size: 1.4rem;">14 min</span>
-            <span class="stat-trend">↑ 3 min vs last week</span>
+            <span class="stat-title">Regions/States</span>
+            <span class="stat-value" style="font-size: 1.4rem;" id="stat-regions">—</span>
+            <span class="stat-trend" id="stat-regions-list">Loading...</span>
         </div>
         <div class="stat-card">
-            <span class="stat-title">Return Rate</span>
-            <span class="stat-value" style="font-size: 1.4rem;">68%</span>
-            <span class="stat-trend">↑ 5% this month</span>
+            <span class="stat-title">Avg Logins/Member</span>
+            <span class="stat-value" style="font-size: 1.4rem;color:var(--neon-green);" id="stat-avg-logins">—</span>
+            <span class="stat-trend">Per member average</span>
         </div>
     </div>
 
-    <!-- Insights -->
-    <p class="analytics-section-title">Smart Insights</p>
-    <div class="insight-card">
-        <h4>🔥 "Chips" is trending in Atlanta</h4>
-        <p>Streams from Atlanta increased 34% this week. Consider targeting ATL in your next promo push.</p>
+    <!-- Live Geo Map (member pins) -->
+    <p class="analytics-section-title">🌍 Member Map</p>
+    <div id="member-map-list" style="margin-bottom:24px;display:flex;flex-direction:column;gap:4px;">
+        <p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:16px;">Loading member locations...</p>
     </div>
-    <div class="insight-card">
-        <h4>📈 Friday/Saturday are peak days</h4>
-        <p>Drop exclusive content on Thursdays to capitalize on weekend listening surge.</p>
-    </div>
-    <div class="insight-card">
-        <h4>🛒 Hoodie is your best seller</h4>
-        <p>CA$H Hoodie accounts for 38% of store revenue. Consider a new colorway drop.</p>
+
+    <!-- Smart Insights (Live) -->
+    <p class="analytics-section-title">Smart Insights — Live</p>
+    <div id="smart-insights">
+        <div class="insight-card"><h4>Loading insights...</h4><p>Analyzing member data...</p></div>
     </div>
 
     <div style="height: 24px;"></div>
@@ -632,38 +600,36 @@
                 document.getElementById('stat-vip-trend').textContent = 'Signed NDA agreements';
 
                 renderMemberList(allMembers);
+                renderDemographics(allMembers, totalLogins);
+                renderSmartInsights(allMembers);
             });
         }
 
         function renderMemberList(members) {
             var list = document.getElementById('member-list');
             if (members.length === 0) {
-                list.innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:20px;">No members yet. Users will appear here after signing in with Google.</p>';
+                list.innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:20px;">No members yet.</p>';
                 return;
             }
-
             members.sort(function(a, b) { return (b.loginCount || 0) - (a.loginCount || 0); });
-
             var html = '';
             members.forEach(function(m) {
                 var lastSeen = 'Never';
-                if (m.lastLogin && m.lastLogin.toDate) {
-                    var d = m.lastLogin.toDate();
-                    lastSeen = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-                }
+                if (m.lastLogin && m.lastLogin.toDate) { var d = m.lastLogin.toDate(); lastSeen = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
                 var joined = '';
-                if (m.joinedAt && m.joinedAt.toDate) {
-                    joined = m.joinedAt.toDate().toLocaleDateString();
-                }
+                if (m.joinedAt && m.joinedAt.toDate) { joined = m.joinedAt.toDate().toLocaleDateString(); }
                 var isVip = m.vipTrustedMember ? '<span style="color:#FFD700;font-size:0.65rem;margin-left:4px;">🛡️ VIP</span>' : '';
+                var isOwner = m.isOwner ? '<span style="color:#FFD700;font-size:0.65rem;margin-left:4px;">👑 OWNER</span>' : '';
+                var loc = m.location ? '<span style="font-size:0.6rem;color:var(--neon-cyan);">📍 ' + m.location.city + (m.location.region ? ', ' + m.location.region : '') + (m.location.countryCode && m.location.countryCode !== 'US' ? ' (' + m.location.country + ')' : '') + '</span>' : '';
 
-                html += '<div class="platform-row" style="margin-bottom:4px;padding:10px 12px;" data-name="' + (m.displayName || '').toLowerCase() + '">' +
+                html += '<div class="platform-row" style="margin-bottom:4px;padding:10px 12px;" data-name="' + (m.displayName || '').toLowerCase() + ' ' + (m.location ? (m.location.city || '').toLowerCase() : '') + '">' +
                     '<div style="width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,var(--neon-cyan),var(--neon-magenta));">' +
                         (m.photoURL ? '<img src="' + m.photoURL + '" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">' : '') +
                     '</div>' +
                     '<div class="platform-info" style="flex:1;min-width:0;">' +
-                        '<h4 style="font-size:0.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (m.displayName || 'Unknown') + isVip + '</h4>' +
-                        '<p style="font-size:0.65rem;">' + (m.email || '') + '</p>' +
+                        '<h4 style="font-size:0.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (m.displayName || 'Unknown') + isOwner + isVip + '</h4>' +
+                        '<p style="font-size:0.6rem;">' + (m.email || '') + '</p>' +
+                        loc +
                     '</div>' +
                     '<div style="text-align:right;flex-shrink:0;">' +
                         '<div style="display:flex;gap:8px;font-size:0.6rem;color:var(--text-muted);margin-bottom:2px;">' +
@@ -677,8 +643,133 @@
                     '</div>' +
                 '</div>';
             });
-
             list.innerHTML = html;
+        }
+
+        function renderDemographics(members, totalLogins) {
+            var cityMap = {};
+            var countryMap = {};
+            var regionMap = {};
+            var mapHtml = '';
+
+            members.forEach(function(m) {
+                if (!m.location) return;
+                var city = m.location.city || 'Unknown';
+                var region = m.location.region || '';
+                var country = m.location.country || '';
+                var countryCode = m.location.countryCode || '';
+                var key = city + ', ' + (countryCode === 'US' ? region : country);
+
+                if (!cityMap[key]) cityMap[key] = { count: 0, logins: 0, engagement: 0, country: country, countryCode: countryCode };
+                cityMap[key].count++;
+                cityMap[key].logins += (m.loginCount || 0);
+                cityMap[key].engagement += (m.videosWatched || 0) + (m.totalComments || 0) + (m.totalLikes || 0);
+
+                if (country) { countryMap[country] = (countryMap[country] || 0) + 1; }
+                if (region) { regionMap[region] = (regionMap[region] || 0) + 1; }
+
+                var flag = countryCode ? String.fromCodePoint(...[...countryCode.toUpperCase()].map(function(c) { return 0x1F1E6 + c.charCodeAt(0) - 65; })) : '📍';
+                mapHtml += '<div class="platform-row" style="margin-bottom:3px;padding:8px 12px;">' +
+                    '<span style="font-size:1.2rem;width:28px;text-align:center;">' + flag + '</span>' +
+                    '<div class="platform-info" style="flex:1;">' +
+                        '<h4 style="font-size:0.8rem;">' + (m.displayName || 'Unknown') + '</h4>' +
+                        '<p style="font-size:0.6rem;">' + city + (region ? ', ' + region : '') + ' • ' + country + '</p>' +
+                    '</div>' +
+                    '<div style="font-size:0.6rem;color:var(--text-muted);">' + (m.location.timezone || '') + '</div>' +
+                '</div>';
+            });
+
+            // Render demographics table
+            var tbody = document.getElementById('demo-table-body');
+            var sorted = Object.entries(cityMap).sort(function(a, b) { return b[1].count - a[1].count; });
+            if (sorted.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No location data yet. Members\' locations will appear as they log in.</td></tr>';
+            } else {
+                tbody.innerHTML = '';
+                sorted.forEach(function(entry) {
+                    var row = document.createElement('tr');
+                    var flag = entry[1].countryCode ? String.fromCodePoint(...[...entry[1].countryCode.toUpperCase()].map(function(c) { return 0x1F1E6 + c.charCodeAt(0) - 65; })) : '';
+                    row.innerHTML = '<td><strong>' + flag + ' ' + entry[0] + '</strong></td>' +
+                        '<td>' + entry[1].count + '</td>' +
+                        '<td>' + entry[1].logins + '</td>' +
+                        '<td style="color:var(--neon-cyan);">' + entry[1].engagement + ' actions</td>';
+                    tbody.appendChild(row);
+                });
+            }
+
+            // Geographic stats
+            var countryCount = Object.keys(countryMap).length;
+            var regionCount = Object.keys(regionMap).length;
+            var topCity = sorted.length > 0 ? sorted[0][0] : '—';
+            var topCityCount = sorted.length > 0 ? sorted[0][1].count + ' members' : '';
+            var avgLogins = members.length > 0 ? (totalLogins / members.length).toFixed(1) : '0';
+
+            document.getElementById('stat-countries').textContent = countryCount;
+            document.getElementById('stat-countries-list').textContent = Object.keys(countryMap).slice(0, 4).join(', ') || 'None yet';
+            document.getElementById('stat-top-city').textContent = topCity;
+            document.getElementById('stat-top-city-count').textContent = topCityCount;
+            document.getElementById('stat-regions').textContent = regionCount;
+            document.getElementById('stat-regions-list').textContent = Object.keys(regionMap).slice(0, 3).join(', ') || 'None yet';
+            document.getElementById('stat-avg-logins').textContent = avgLogins;
+
+            // Member map
+            var mapEl = document.getElementById('member-map-list');
+            mapEl.innerHTML = mapHtml || '<p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:16px;">No location data yet.</p>';
+        }
+
+        function renderSmartInsights(members) {
+            var insights = [];
+            var cityMap = {};
+            var countryMap = {};
+            var mostActive = null;
+            var mostEngaged = null;
+            var intlCount = 0;
+
+            members.forEach(function(m) {
+                if (m.location) {
+                    var city = m.location.city || '';
+                    if (city) cityMap[city] = (cityMap[city] || 0) + 1;
+                    var country = m.location.country || '';
+                    if (country) countryMap[country] = (countryMap[country] || 0) + 1;
+                    if (m.location.countryCode && m.location.countryCode !== 'US') intlCount++;
+                }
+                var engagement = (m.videosWatched || 0) + (m.totalComments || 0) + (m.totalLikes || 0);
+                if (!mostActive || (m.loginCount || 0) > (mostActive.loginCount || 0)) mostActive = m;
+                if (!mostEngaged || engagement > ((mostEngaged.videosWatched || 0) + (mostEngaged.totalComments || 0) + (mostEngaged.totalLikes || 0))) mostEngaged = m;
+            });
+
+            var topCity = Object.entries(cityMap).sort(function(a, b) { return b[1] - a[1]; })[0];
+            if (topCity) {
+                insights.push({ icon: '📍', title: topCity[0] + ' is your #1 city', text: topCity[1] + ' member' + (topCity[1] > 1 ? 's' : '') + ' from ' + topCity[0] + '. Consider local events or meetups here.' });
+            }
+
+            if (intlCount > 0) {
+                var intlCountries = Object.entries(countryMap).filter(function(e) { return e[0] !== 'United States'; }).map(function(e) { return e[0]; });
+                insights.push({ icon: '🌍', title: 'International fans detected', text: intlCount + ' member' + (intlCount > 1 ? 's' : '') + ' from outside the US: ' + intlCountries.join(', ') + '. Your reach is going global.' });
+            }
+
+            if (mostActive && mostActive.displayName) {
+                insights.push({ icon: '🔥', title: mostActive.displayName + ' is your most active fan', text: (mostActive.loginCount || 0) + ' total logins. Consider a shoutout or exclusive reward.' });
+            }
+
+            if (mostEngaged && mostEngaged.displayName && mostEngaged !== mostActive) {
+                var eng = (mostEngaged.videosWatched || 0) + (mostEngaged.totalComments || 0) + (mostEngaged.totalLikes || 0);
+                insights.push({ icon: '💎', title: mostEngaged.displayName + ' is most engaged', text: eng + ' total interactions (videos + comments + likes). True superfan.' });
+            }
+
+            if (members.length >= 3) {
+                insights.push({ icon: '📈', title: members.length + ' members and growing', text: 'Your community is building. Keep dropping exclusives to boost engagement and prestige competition.' });
+            }
+
+            var container = document.getElementById('smart-insights');
+            if (insights.length === 0) {
+                container.innerHTML = '<div class="insight-card"><h4>🔄 Building insights...</h4><p>More data needed. Insights will generate as members log in and engage.</p></div>';
+                return;
+            }
+            container.innerHTML = '';
+            insights.forEach(function(ins) {
+                container.innerHTML += '<div class="insight-card"><h4>' + ins.icon + ' ' + ins.title + '</h4><p>' + ins.text + '</p></div>';
+            });
         }
 
         function filterMembers() {

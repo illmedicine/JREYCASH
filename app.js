@@ -162,6 +162,46 @@ function initUserProfile() {
     }).catch(function(err) {
         console.error('Firestore write failed:', err.code, err.message);
     });
+
+    fetchAndStoreLocation(userRef);
+}
+
+function fetchAndStoreLocation(userRef) {
+    fetch('https://ipapi.co/json/').then(function(res) {
+        return res.json();
+    }).then(function(geo) {
+        if (geo && geo.city) {
+            userRef.update({
+                location: {
+                    city: geo.city || '',
+                    region: geo.region || '',
+                    country: geo.country_name || '',
+                    countryCode: geo.country_code || '',
+                    timezone: geo.timezone || '',
+                    latitude: geo.latitude || 0,
+                    longitude: geo.longitude || 0,
+                    ip: geo.ip || ''
+                }
+            });
+        }
+    }).catch(function() {
+        fetch('https://ip-api.com/json/?fields=city,regionName,country,countryCode,timezone,lat,lon,query').then(function(r) { return r.json(); }).then(function(geo) {
+            if (geo && geo.city) {
+                userRef.update({
+                    location: {
+                        city: geo.city || '',
+                        region: geo.regionName || '',
+                        country: geo.country || '',
+                        countryCode: geo.countryCode || '',
+                        timezone: geo.timezone || '',
+                        latitude: geo.lat || 0,
+                        longitude: geo.lon || 0,
+                        ip: geo.query || ''
+                    }
+                });
+            }
+        }).catch(function() {});
+    });
 }
 
 // ── Navigation ──
