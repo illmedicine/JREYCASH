@@ -584,6 +584,15 @@ function loadNotifications() {
         }, function() {});
 }
 
+// ── Exclusive Video Player ──
+function playExclusive(thumbEl, videoId) {
+    var embed = document.createElement('div');
+    embed.className = 'video-embed';
+    embed.innerHTML = '<iframe src="https://www.youtube.com/embed/' + videoId + '?autoplay=1" title="Exclusive" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+    thumbEl.replaceWith(embed);
+    trackPrestige('watch_video');
+}
+
 // ── Video Player ──
 function playVideo(card, videoId) {
     var thumbEl = card.querySelector('.video-thumb');
