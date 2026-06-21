@@ -93,17 +93,27 @@ function initUserProfile() {
             const data = doc.data();
             prestigePoints = data.prestigePoints || 0;
             updatePrestigeDisplay();
+            userRef.update({
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                loginCount: firebase.firestore.FieldValue.increment(1),
+                displayName: currentUser.displayName,
+                email: currentUser.email,
+                photoURL: currentUser.photoURL
+            });
         } else {
             userRef.set({
                 displayName: currentUser.displayName,
                 email: currentUser.email,
                 photoURL: currentUser.photoURL,
                 prestigePoints: 0,
+                loginCount: 1,
+                videosWatched: 0,
+                totalComments: 0,
+                totalLikes: 0,
                 joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 lastLogin: firebase.firestore.FieldValue.serverTimestamp()
             });
         }
-        userRef.update({ lastLogin: firebase.firestore.FieldValue.serverTimestamp() });
     }).catch(err => console.warn('Profile load failed:', err.message));
 }
 
@@ -294,9 +304,17 @@ function trackPrestige(action) {
     updatePrestigeDisplay();
 
     if (db && currentUser && currentUser.uid !== 'demo') {
-        db.collection('users').doc(currentUser.uid).update({
-            prestigePoints: prestigePoints
-        }).catch(() => {});
+        var updates = { prestigePoints: prestigePoints };
+
+        if (action === 'watch_video') {
+            updates.videosWatched = firebase.firestore.FieldValue.increment(1);
+        } else if (action === 'comment') {
+            updates.totalComments = firebase.firestore.FieldValue.increment(1);
+        } else if (action === 'like') {
+            updates.totalLikes = firebase.firestore.FieldValue.increment(1);
+        }
+
+        db.collection('users').doc(currentUser.uid).update(updates).catch(function() {});
     }
 }
 

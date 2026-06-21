@@ -170,28 +170,63 @@
         <button class="time-btn" onclick="setTimeFilter(this)">All</button>
     </div>
 
-    <!-- Key Metrics -->
-    <p class="analytics-section-title">Overview</p>
+    <!-- Key Metrics (Firestore-driven) -->
+    <p class="analytics-section-title">Overview — Live from Firebase</p>
     <div class="dashboard-grid">
         <div class="stat-card">
-            <span class="stat-title">App Exclusive Plays</span>
-            <span class="stat-value">24,592</span>
-            <span class="stat-trend">↑ 12% this week</span>
+            <span class="stat-title">Total Members (All-Time)</span>
+            <span class="stat-value" style="color: var(--neon-cyan);" id="stat-total-members">—</span>
+            <span class="stat-trend" id="stat-total-members-trend">Loading...</span>
         </div>
         <div class="stat-card">
-            <span class="stat-title">Active Users</span>
-            <span class="stat-value" style="color: var(--neon-cyan);">1,847</span>
-            <span class="stat-trend">↑ 8% this week</span>
+            <span class="stat-title">Active Today</span>
+            <span class="stat-value" style="color: var(--neon-green);" id="stat-active-today">—</span>
+            <span class="stat-trend" id="stat-active-today-trend">Loading...</span>
         </div>
         <div class="stat-card">
-            <span class="stat-title">Store Revenue</span>
-            <span class="stat-value" style="color: var(--neon-magenta);">$1,240</span>
-            <span class="stat-trend">↑ 5% today</span>
+            <span class="stat-title">Total Logins (All-Time)</span>
+            <span class="stat-value" id="stat-total-logins">—</span>
+            <span class="stat-trend" id="stat-total-logins-trend">Loading...</span>
         </div>
         <div class="stat-card">
-            <span class="stat-title">New Signups</span>
-            <span class="stat-value" style="color: var(--neon-green);">312</span>
-            <span class="stat-trend">↑ 22% this week</span>
+            <span class="stat-title">Active This Week</span>
+            <span class="stat-value" style="color: var(--neon-magenta);" id="stat-active-week">—</span>
+            <span class="stat-trend" id="stat-active-week-trend">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Engagement Totals -->
+    <div class="dashboard-grid" style="margin-bottom: 24px;">
+        <div class="stat-card">
+            <span class="stat-title">Total Videos Watched</span>
+            <span class="stat-value" style="color: #FF0000;" id="stat-videos-watched">—</span>
+            <span class="stat-trend" id="stat-videos-trend">Loading...</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Total Comments</span>
+            <span class="stat-value" style="color: var(--neon-cyan);" id="stat-total-comments">—</span>
+            <span class="stat-trend" id="stat-comments-trend">Loading...</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Total Likes</span>
+            <span class="stat-value" style="color: var(--neon-magenta);" id="stat-total-likes">—</span>
+            <span class="stat-trend" id="stat-likes-trend">Loading...</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">VIP Members (NDA)</span>
+            <span class="stat-value" style="color: #FFD700;" id="stat-vip-members">—</span>
+            <span class="stat-trend" id="stat-vip-trend">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Member Directory -->
+    <p class="analytics-section-title">👥 Member Directory — Live</p>
+    <div class="action-section" style="margin-bottom: 24px; padding: 12px;">
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <input type="text" id="member-search" placeholder="Search members..." oninput="filterMembers()" style="flex:1;padding:10px 14px;background:var(--bg-dark);border:1px solid var(--glass-border);border-radius:8px;color:var(--text-light);font-size:0.8rem;outline:none;">
+        </div>
+        <div id="member-list" style="max-height:400px;overflow-y:auto;">
+            <p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:20px;">Loading members from Firebase...</p>
         </div>
     </div>
 
@@ -502,6 +537,140 @@
         }
 
         loadNdaLog();
+        loadMemberAnalytics();
+
+        var allMembers = [];
+
+        function loadMemberAnalytics() {
+            if (!portalDb) {
+                setStatFallback();
+                return;
+            }
+
+            portalDb.collection('users').onSnapshot(function(snapshot) {
+                allMembers = [];
+                var totalLogins = 0;
+                var totalVideos = 0;
+                var totalComments = 0;
+                var totalLikes = 0;
+                var vipCount = 0;
+                var activeToday = 0;
+                var activeWeek = 0;
+
+                var now = new Date();
+                var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+                var weekStart = todayStart - (7 * 24 * 60 * 60 * 1000);
+
+                snapshot.forEach(function(doc) {
+                    var d = doc.data();
+                    d._id = doc.id;
+                    allMembers.push(d);
+
+                    totalLogins += (d.loginCount || 0);
+                    totalVideos += (d.videosWatched || 0);
+                    totalComments += (d.totalComments || 0);
+                    totalLikes += (d.totalLikes || 0);
+                    if (d.vipTrustedMember) vipCount++;
+
+                    if (d.lastLogin) {
+                        var lastMs = d.lastLogin.toDate ? d.lastLogin.toDate().getTime() : 0;
+                        if (lastMs >= todayStart) activeToday++;
+                        if (lastMs >= weekStart) activeWeek++;
+                    }
+                });
+
+                var totalMembers = allMembers.length;
+
+                document.getElementById('stat-total-members').textContent = totalMembers.toLocaleString();
+                document.getElementById('stat-total-members-trend').textContent = 'All-time Google SSO signups';
+
+                document.getElementById('stat-active-today').textContent = activeToday.toLocaleString();
+                document.getElementById('stat-active-today-trend').textContent = 'Logged in today';
+
+                document.getElementById('stat-total-logins').textContent = totalLogins.toLocaleString();
+                document.getElementById('stat-total-logins-trend').textContent = 'Cumulative app opens';
+
+                document.getElementById('stat-active-week').textContent = activeWeek.toLocaleString();
+                document.getElementById('stat-active-week-trend').textContent = 'Active in last 7 days';
+
+                document.getElementById('stat-videos-watched').textContent = totalVideos.toLocaleString();
+                document.getElementById('stat-videos-trend').textContent = 'Across all members';
+
+                document.getElementById('stat-total-comments').textContent = totalComments.toLocaleString();
+                document.getElementById('stat-comments-trend').textContent = 'Thread + content comments';
+
+                document.getElementById('stat-total-likes').textContent = totalLikes.toLocaleString();
+                document.getElementById('stat-likes-trend').textContent = 'Hearts given';
+
+                document.getElementById('stat-vip-members').textContent = vipCount.toLocaleString();
+                document.getElementById('stat-vip-trend').textContent = 'Signed NDA agreements';
+
+                renderMemberList(allMembers);
+            });
+        }
+
+        function renderMemberList(members) {
+            var list = document.getElementById('member-list');
+            if (members.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:20px;">No members yet. Users will appear here after signing in with Google.</p>';
+                return;
+            }
+
+            members.sort(function(a, b) { return (b.loginCount || 0) - (a.loginCount || 0); });
+
+            var html = '';
+            members.forEach(function(m) {
+                var lastSeen = 'Never';
+                if (m.lastLogin && m.lastLogin.toDate) {
+                    var d = m.lastLogin.toDate();
+                    lastSeen = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+                }
+                var joined = '';
+                if (m.joinedAt && m.joinedAt.toDate) {
+                    joined = m.joinedAt.toDate().toLocaleDateString();
+                }
+                var isVip = m.vipTrustedMember ? '<span style="color:#FFD700;font-size:0.65rem;margin-left:4px;">🛡️ VIP</span>' : '';
+
+                html += '<div class="platform-row" style="margin-bottom:4px;padding:10px 12px;" data-name="' + (m.displayName || '').toLowerCase() + '">' +
+                    '<div style="width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,var(--neon-cyan),var(--neon-magenta));">' +
+                        (m.photoURL ? '<img src="' + m.photoURL + '" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer">' : '') +
+                    '</div>' +
+                    '<div class="platform-info" style="flex:1;min-width:0;">' +
+                        '<h4 style="font-size:0.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (m.displayName || 'Unknown') + isVip + '</h4>' +
+                        '<p style="font-size:0.65rem;">' + (m.email || '') + '</p>' +
+                    '</div>' +
+                    '<div style="text-align:right;flex-shrink:0;">' +
+                        '<div style="display:flex;gap:8px;font-size:0.6rem;color:var(--text-muted);margin-bottom:2px;">' +
+                            '<span title="Logins">🔑 ' + (m.loginCount || 0) + '</span>' +
+                            '<span title="Videos">▶ ' + (m.videosWatched || 0) + '</span>' +
+                            '<span title="Comments">💬 ' + (m.totalComments || 0) + '</span>' +
+                            '<span title="Likes">♥ ' + (m.totalLikes || 0) + '</span>' +
+                        '</div>' +
+                        '<div style="font-size:0.55rem;color:var(--text-dim);">Last: ' + lastSeen + '</div>' +
+                        '<div style="font-size:0.55rem;color:var(--text-dim);">Joined: ' + joined + '</div>' +
+                    '</div>' +
+                '</div>';
+            });
+
+            list.innerHTML = html;
+        }
+
+        function filterMembers() {
+            var q = document.getElementById('member-search').value.toLowerCase();
+            var rows = document.querySelectorAll('#member-list .platform-row');
+            rows.forEach(function(row) {
+                var name = row.getAttribute('data-name') || '';
+                row.style.display = name.indexOf(q) >= 0 ? '' : 'none';
+            });
+        }
+
+        function setStatFallback() {
+            ['stat-total-members','stat-active-today','stat-total-logins','stat-active-week',
+             'stat-videos-watched','stat-total-comments','stat-total-likes','stat-vip-members'].forEach(function(id) {
+                document.getElementById(id).textContent = '—';
+            });
+            document.getElementById('member-list').innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:20px;">Connect Firebase to see live member data.</p>';
+        }
     </script>
 </body>
 </html>
