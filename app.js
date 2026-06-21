@@ -383,4 +383,17 @@ function timeAgo(date) {
     return date.toLocaleDateString();
 }
 
+// ── Video Player (lazy iframe load on tap) ──
+function playVideo(card, videoId) {
+    const thumbEl = card.querySelector('.video-thumb');
+    if (!thumbEl) return;
+
+    const embed = document.createElement('div');
+    embed.className = 'video-embed';
+    embed.innerHTML = '<iframe src="https://www.youtube.com/embed/' + videoId + '?autoplay=1" title="Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+    thumbEl.replaceWith(embed);
+    card.onclick = null;
+    trackPrestige('watch_video');
+}
+
 document.addEventListener('DOMContentLoaded', updatePrestigeDisplay);

@@ -101,12 +101,12 @@
             </div>
 
             <div class="exclusive-feed" id="exclusive-feed">
-                <!-- Placeholder exclusive items -->
                 <div class="exclusive-card">
                     <div class="exclusive-media">
-                        <div class="media-placeholder video">
-                            <span>🎬</span>
-                            <p>Behind the Scenes: "Chips" Music Video</p>
+                        <div class="media-thumb">
+                            <img src="https://img.youtube.com/vi/IMboFsz0j-E/hqdefault.jpg" alt="Chips BTS" loading="lazy">
+                            <span class="thumb-badge">🎬 EXCLUSIVE</span>
+                            <span class="thumb-play">▶</span>
                         </div>
                     </div>
                     <div class="exclusive-info">
@@ -126,9 +126,10 @@
 
                 <div class="exclusive-card">
                     <div class="exclusive-media">
-                        <div class="media-placeholder audio">
-                            <span>🎵</span>
-                            <p>Unreleased Track: "Buffalo Nights"</p>
+                        <div class="media-thumb">
+                            <img src="https://img.youtube.com/vi/UVzRgrXVZzg/hqdefault.jpg" alt="Let The Money Talk" loading="lazy">
+                            <span class="thumb-badge">🎵 EXCLUSIVE</span>
+                            <span class="thumb-play">▶</span>
                         </div>
                     </div>
                     <div class="exclusive-info">
@@ -148,9 +149,10 @@
 
                 <div class="exclusive-card">
                     <div class="exclusive-media">
-                        <div class="media-placeholder video">
-                            <span>🎤</span>
-                            <p>Freestyle Session — Studio Vibes</p>
+                        <div class="media-thumb">
+                            <img src="https://img.youtube.com/vi/HnFqp5Ru2nQ/hqdefault.jpg" alt="Back Outside" loading="lazy">
+                            <span class="thumb-badge">🎤 EXCLUSIVE</span>
+                            <span class="thumb-play">▶</span>
                         </div>
                     </div>
                     <div class="exclusive-info">
@@ -337,37 +339,42 @@
             </div>
 
             <div class="video-feed">
-                <div class="video-card">
-                    <div class="video-embed">
-                        <iframe src="https://www.youtube.com/embed/IMboFsz0j-E" title="Chips" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                <div class="video-card" onclick="playVideo(this, 'IMboFsz0j-E')">
+                    <div class="video-thumb">
+                        <img src="https://img.youtube.com/vi/IMboFsz0j-E/hqdefault.jpg" alt="Chips" loading="lazy">
+                        <span class="thumb-play">▶</span>
                     </div>
                     <h4>Chips (Official Video)</h4>
                     <p>45.2K views</p>
                 </div>
-                <div class="video-card">
-                    <div class="video-embed">
-                        <iframe src="https://www.youtube.com/embed/16lSCZ960fg" title="FREE SOS & FREE STAIN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                <div class="video-card" onclick="playVideo(this, '16lSCZ960fg')">
+                    <div class="video-thumb">
+                        <img src="https://img.youtube.com/vi/16lSCZ960fg/hqdefault.jpg" alt="FREE SOS & FREE STAIN" loading="lazy">
+                        <span class="thumb-play">▶</span>
                     </div>
                     <h4>FREE SOS & FREE STAIN</h4>
                     <p>Official Video</p>
                 </div>
-                <div class="video-card">
-                    <div class="video-embed">
-                        <iframe src="https://www.youtube.com/embed/UVzRgrXVZzg" title="Let The Money Talk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                <div class="video-card" onclick="playVideo(this, 'UVzRgrXVZzg')">
+                    <div class="video-thumb">
+                        <img src="https://img.youtube.com/vi/UVzRgrXVZzg/hqdefault.jpg" alt="Let The Money Talk" loading="lazy">
+                        <span class="thumb-play">▶</span>
                     </div>
                     <h4>Let The Money Talk</h4>
                     <p>Official Video</p>
                 </div>
-                <div class="video-card">
-                    <div class="video-embed">
-                        <iframe src="https://www.youtube.com/embed/HnFqp5Ru2nQ" title="Back Outside" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                <div class="video-card" onclick="playVideo(this, 'HnFqp5Ru2nQ')">
+                    <div class="video-thumb">
+                        <img src="https://img.youtube.com/vi/HnFqp5Ru2nQ/hqdefault.jpg" alt="Back Outside" loading="lazy">
+                        <span class="thumb-play">▶</span>
                     </div>
                     <h4>Back Outside</h4>
                     <p>Official Video</p>
                 </div>
-                <div class="video-card">
-                    <div class="video-embed">
-                        <iframe src="https://www.youtube.com/embed/FML0_PobbhA" title="Chicken Talk ft Chicken P" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                <div class="video-card" onclick="playVideo(this, 'FML0_PobbhA')">
+                    <div class="video-thumb">
+                        <img src="https://img.youtube.com/vi/FML0_PobbhA/hqdefault.jpg" alt="Chicken Talk ft Chicken P" loading="lazy">
+                        <span class="thumb-play">▶</span>
                     </div>
                     <h4>Chicken Talk ft Chicken P</h4>
                     <p>Official Video</p>
