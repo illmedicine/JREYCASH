@@ -865,6 +865,30 @@ img.album-art {
     gap: 14px;
 }
 
+.comment-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.comment-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.comment-avatar-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #fff;
+}
+
 .comment strong {
     font-size: 0.85rem;
     color: var(--neon-cyan);

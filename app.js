@@ -22,16 +22,34 @@ try {
 
 // ── Auth ──
 function signInWithGoogle() {
-    if (auth && provider) {
-        auth.signInWithPopup(provider).then(result => {
-            handleSignIn(result.user);
-        }).catch(err => {
-            console.warn('Google sign-in failed, using demo mode:', err.message);
-            handleSignIn({ displayName: "Demo User", email: "demo@gmail.com", photoURL: "", uid: "demo" });
-        });
-    } else {
-        handleSignIn({ displayName: "Demo User", email: "demo@gmail.com", photoURL: "", uid: "demo" });
+    if (!auth || !provider) {
+        alert('Firebase not initialized. Please try again.');
+        return;
     }
+
+    auth.signInWithPopup(provider).then(function(result) {
+        handleSignIn(result.user);
+    }).catch(function(err) {
+        console.error('Google sign-in popup failed:', err.code, err.message);
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user') {
+            auth.signInWithRedirect(provider);
+        } else if (err.code === 'auth/unauthorized-domain') {
+            alert('This domain is not authorized in Firebase. Add "' + window.location.hostname + '" to Firebase Auth → Settings → Authorized domains.');
+        } else {
+            alert('Sign-in failed: ' + err.message);
+        }
+    });
+}
+
+// Handle redirect result on page load
+if (auth) {
+    auth.getRedirectResult().then(function(result) {
+        if (result && result.user) handleSignIn(result.user);
+    }).catch(function() {});
+
+    auth.onAuthStateChanged(function(user) {
+        if (user && !currentUser) handleSignIn(user);
+    });
 }
 
 function handleSignIn(user) {
@@ -48,10 +66,13 @@ function handleSignIn(user) {
     document.getElementById('user-display-name').textContent = currentUser.displayName;
     document.getElementById('user-email-display').textContent = currentUser.email;
 
-    const photoEl = document.getElementById('user-photo');
+    var photoEl = document.getElementById('user-photo');
     if (currentUser.photoURL) {
         photoEl.src = currentUser.photoURL;
         photoEl.alt = currentUser.displayName;
+        photoEl.style.display = 'block';
+        photoEl.referrerPolicy = 'no-referrer';
+        photoEl.parentElement.style.background = 'none';
     } else {
         photoEl.parentElement.style.background = 'linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta))';
         photoEl.style.display = 'none';
@@ -63,7 +84,7 @@ function handleSignIn(user) {
 }
 
 function signOut() {
-    if (auth) auth.signOut().catch(() => {});
+    if (auth) auth.signOut().catch(function() {});
     currentUser = null;
     document.getElementById('auth-gate').style.display = 'flex';
     document.getElementById('main-app').style.display = 'none';
@@ -206,11 +227,13 @@ function openComments(contentId) {
                     const comment = document.createElement('div');
                     comment.className = 'comment';
                     const timeStr = data.timestamp ? timeAgo(data.timestamp.toDate()) : 'Just now';
-                    comment.innerHTML = `
-                        <strong>${escapeHtml(data.displayName || 'Fan')}</strong>
-                        <p>${escapeHtml(data.text)}</p>
-                        <span class="comment-time">${timeStr}</span>
-                    `;
+                    const avatarHtml = data.photoURL
+                        ? '<img class="comment-avatar" src="' + data.photoURL + '" referrerpolicy="no-referrer">'
+                        : '<div class="comment-avatar comment-avatar-fallback">' + (data.displayName || 'F').charAt(0).toUpperCase() + '</div>';
+                    comment.innerHTML = '<div class="comment-row">' + avatarHtml +
+                        '<div><strong>' + escapeHtml(data.displayName || 'Fan') + '</strong>' +
+                        '<p>' + escapeHtml(data.text) + '</p>' +
+                        '<span class="comment-time">' + timeStr + '</span></div></div>';
                     list.appendChild(comment);
                 });
             }, err => {
@@ -263,9 +286,10 @@ function postComment() {
             contentId: activeCommentContentId,
             userId: currentUser.uid,
             displayName: displayName,
+            photoURL: currentUser.photoURL || '',
             text: text,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(err => console.warn('Comment post failed:', err.message));
+        }).catch(function(err) { console.warn('Comment post failed:', err.message); });
     } else {
         const list = document.getElementById('comments-list');
         const noComments = list.querySelector('p[style]');
@@ -428,19 +452,22 @@ function submitQuickComment() {
 
     var displayName = currentUser ? currentUser.displayName : 'Fan';
 
+    var photoURL = currentUser ? currentUser.photoURL || '' : '';
+
     if (db && currentUser && currentUser.uid !== 'demo') {
         db.collection('community_thread').add({
             contentId: qcContentId,
             contentTitle: qcContentTitle,
             userId: currentUser.uid,
             displayName: displayName,
+            photoURL: photoURL,
             text: text,
             likes: 0,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         }).catch(function(err) { console.warn('Thread post failed:', err.message); });
     }
 
-    addThreadPost(displayName, qcContentTitle, text);
+    addThreadPost(displayName, qcContentTitle, text, photoURL);
     closeQuickComment();
     trackPrestige('comment');
 
@@ -450,7 +477,7 @@ function submitQuickComment() {
     }
 }
 
-function addThreadPost(author, contentTitle, text) {
+function addThreadPost(author, contentTitle, text, photoURL) {
     var feed = document.getElementById('thread-feed');
     if (!feed) return;
 
@@ -459,17 +486,12 @@ function addThreadPost(author, contentTitle, text) {
     post.style.borderColor = 'rgba(0, 243, 255, 0.3)';
     setTimeout(function() { post.style.borderColor = ''; }, 3000);
 
-    var tagIcon = '💬';
-    if (contentTitle.toLowerCase().includes('video') || contentTitle.toLowerCase().includes('chips') ||
-        contentTitle.toLowerCase().includes('talk') || contentTitle.toLowerCase().includes('outside') ||
-        contentTitle.toLowerCase().includes('stain')) tagIcon = '🎬';
-    else if (contentTitle.toLowerCase().includes('member') || contentTitle.toLowerCase().includes('jefe') ||
-             contentTitle.toLowerCase().includes('deluxe')) tagIcon = '💿';
-    else if (contentTitle.toLowerCase().includes('hoodie') || contentTitle.toLowerCase().includes('tee') ||
-             contentTitle.toLowerCase().includes('merch') || contentTitle.toLowerCase().includes('snapback')) tagIcon = '🛍️';
+    var tagIcon = getContentIcon(contentTitle);
+    var avatarHtml = buildAvatar(photoURL, author);
 
     post.innerHTML =
         '<div class="thread-left">' +
+            avatarHtml +
             '<button class="thread-heart liked" onclick="toggleThreadHeart(this)">♥</button>' +
             '<span class="thread-likes">1</span>' +
         '</div>' +
@@ -523,4 +545,71 @@ function playVideo(card, videoId) {
     trackPrestige('watch_video');
 }
 
-document.addEventListener('DOMContentLoaded', updatePrestigeDisplay);
+// ── Helper: Avatar HTML ──
+function buildAvatar(photoURL, name) {
+    if (photoURL) {
+        return '<img class="thread-avatar" src="' + photoURL + '" alt="' + escapeHtml(name || '') + '" referrerpolicy="no-referrer">';
+    }
+    var initial = (name || '?').charAt(0).toUpperCase();
+    return '<div class="thread-avatar thread-avatar-fallback">' + initial + '</div>';
+}
+
+function getContentIcon(title) {
+    var t = (title || '').toLowerCase();
+    if (t.includes('video') || t.includes('chips') || t.includes('talk') || t.includes('outside') || t.includes('stain') || t.includes('sos')) return '🎬';
+    if (t.includes('member') || t.includes('jefe') || t.includes('deluxe') || t.includes('donation')) return '💿';
+    if (t.includes('hoodie') || t.includes('tee') || t.includes('merch') || t.includes('snapback') || t.includes('bag') || t.includes('glove') || t.includes('cd')) return '🛍️';
+    return '💬';
+}
+
+// ── Activity Toast Notifications ──
+function showActivityToast(message) {
+    var container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.style.cssText = 'position:fixed;top:60px;right:12px;z-index:900;display:flex;flex-direction:column;gap:6px;pointer-events:none;max-width:300px;';
+        document.body.appendChild(container);
+    }
+
+    var toast = document.createElement('div');
+    toast.style.cssText = 'background:rgba(17,17,17,0.95);border:1px solid rgba(0,243,255,0.3);border-radius:10px;padding:10px 14px;font-size:0.75rem;color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);animation:toastIn 0.3s ease,toastOut 0.3s ease 3.7s forwards;pointer-events:auto;';
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(function() { if (toast.parentNode) toast.remove(); }, 4000);
+}
+
+// Add toast CSS
+(function() {
+    var style = document.createElement('style');
+    style.textContent = '@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}.thread-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;margin-bottom:4px;}.thread-avatar-fallback{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--neon-cyan),var(--neon-magenta));font-size:0.7rem;font-weight:800;color:#fff;}';
+    document.head.appendChild(style);
+})();
+
+// ── Live Community Feed (Firestore real-time) ──
+function initLiveCommunityFeed() {
+    if (!db) return;
+
+    db.collection('community_thread')
+        .orderBy('timestamp', 'desc')
+        .limit(20)
+        .onSnapshot(function(snapshot) {
+            var feed = document.getElementById('thread-feed');
+            if (!feed || snapshot.empty) return;
+
+            snapshot.docChanges().forEach(function(change) {
+                if (change.type === 'added' && !change.doc.metadata.hasPendingWrites) {
+                    var d = change.doc.data();
+                    if (d.timestamp) {
+                        showActivityToast('💬 ' + (d.displayName || 'Someone') + ' commented on ' + (d.contentTitle || 'content'));
+                    }
+                }
+            });
+        });
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', function() {
+    updatePrestigeDisplay();
+    initLiveCommunityFeed();
+});
