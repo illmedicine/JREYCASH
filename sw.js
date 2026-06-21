@@ -1,28 +1,7 @@
-var CACHE_NAME = 'jreycash-v1';
-var urlsToCache = [
-  '/JREYCASH/',
-  '/JREYCASH/index.html',
-  '/JREYCASH/styles.css',
-  '/JREYCASH/app.js',
-  '/JREYCASH/store.html',
-  '/JREYCASH/assets/jreycash-hero.png'
-];
+var CACHE_NAME = 'jreycash-v2';
 
 self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(urlsToCache);
-    })
-  );
   self.skipWaiting();
-});
-
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    fetch(event.request).catch(function() {
-      return caches.match(event.request);
-    })
-  );
 });
 
 self.addEventListener('activate', function(event) {
@@ -35,4 +14,25 @@ self.addEventListener('activate', function(event) {
     })
   );
   self.clients.claim();
+});
+
+self.addEventListener('fetch', function(event) {
+  if (event.request.method !== 'GET') return;
+  if (event.request.url.includes('firebasestorage') ||
+      event.request.url.includes('googleapis.com') ||
+      event.request.url.includes('gstatic.com')) return;
+
+  event.respondWith(
+    fetch(event.request).then(function(response) {
+      if (response.ok) {
+        var clone = response.clone();
+        caches.open(CACHE_NAME).then(function(cache) {
+          cache.put(event.request, clone);
+        });
+      }
+      return response;
+    }).catch(function() {
+      return caches.match(event.request);
+    })
+  );
 });
