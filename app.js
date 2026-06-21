@@ -108,34 +108,40 @@ document.addEventListener('click', function(e) {
 function initUserProfile() {
     if (!db || !currentUser || currentUser.uid === 'demo') return;
 
-    const userRef = db.collection('users').doc(currentUser.uid);
-    userRef.get().then(doc => {
+    var userRef = db.collection('users').doc(currentUser.uid);
+
+    userRef.set({
+        displayName: currentUser.displayName,
+        email: currentUser.email,
+        photoURL: currentUser.photoURL,
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+        loginCount: firebase.firestore.FieldValue.increment(1)
+    }, { merge: true }).then(function() {
+        console.log('User profile updated in Firestore');
+        return userRef.get();
+    }).then(function(doc) {
         if (doc.exists) {
-            const data = doc.data();
+            var data = doc.data();
             prestigePoints = data.prestigePoints || 0;
+
+            if (!data.joinedAt) {
+                userRef.update({
+                    joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    prestigePoints: 0,
+                    videosWatched: 0,
+                    totalComments: 0,
+                    totalLikes: 0
+                });
+            }
+
             updatePrestigeDisplay();
-            userRef.update({
-                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                loginCount: firebase.firestore.FieldValue.increment(1),
-                displayName: currentUser.displayName,
-                email: currentUser.email,
-                photoURL: currentUser.photoURL
-            });
-        } else {
-            userRef.set({
-                displayName: currentUser.displayName,
-                email: currentUser.email,
-                photoURL: currentUser.photoURL,
-                prestigePoints: 0,
-                loginCount: 1,
-                videosWatched: 0,
-                totalComments: 0,
-                totalLikes: 0,
-                joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-            });
         }
-    }).catch(err => console.warn('Profile load failed:', err.message));
+    }).catch(function(err) {
+        console.error('Firestore profile write FAILED:', err.code, err.message);
+        if (err.code === 'permission-denied') {
+            console.error('FIRESTORE RULES: You need to update Firestore security rules. Go to Firebase Console → Firestore → Rules and set rules to allow authenticated reads/writes.');
+        }
+    });
 }
 
 // ── Navigation ──
