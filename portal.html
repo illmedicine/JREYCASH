@@ -366,11 +366,142 @@
         <button class="btn-action green">View All Fans (1,847)</button>
     </div>
 
+    <div style="height: 24px;"></div>
+
+    <!-- NDA Management -->
+    <p class="analytics-section-title">🛡️ NDA / Confidentiality Agreements</p>
+    <div class="action-section">
+        <h2 style="color: #FFD700;">Send NDA Agreement</h2>
+        <p>Enter a phone number to generate a 24-hour consent link. The recipient will sign through the Jrey Cash app with their Google account.</p>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <input type="tel" id="nda-phone" placeholder="(716) 555-1234" style="flex:1;padding:12px 14px;background:var(--bg-dark);border:1px solid var(--glass-border);border-radius:8px;color:var(--text-light);font-size:0.9rem;outline:none;">
+            <button class="btn-action" style="width:auto;padding:12px 20px;border-color:#FFD700;color:#FFD700;" onclick="generateNdaLink()">Generate Link</button>
+        </div>
+        <div id="nda-link-result" style="display:none;">
+            <div style="background:var(--bg-dark);border:1px solid #FFD700;border-radius:8px;padding:12px;margin-bottom:10px;">
+                <p style="font-size:0.7rem;color:var(--text-muted);margin-bottom:4px;">Generated Link (valid 24 hours):</p>
+                <p id="nda-generated-link" style="font-size:0.75rem;color:#FFD700;word-break:break-all;margin:0;"></p>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn-action" style="border-color:var(--neon-cyan);color:var(--neon-cyan);" onclick="copyNdaLink()">📋 Copy Link</button>
+                <button class="btn-action" style="border-color:var(--neon-green);color:var(--neon-green);" onclick="sendNdaSms()">📱 Send via SMS</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NDA Log -->
+    <div class="action-section">
+        <h2 style="color: #FFD700;">Signed Agreements Log</h2>
+        <p>All signed NDA records are stored securely and accessible only to you.</p>
+        <div id="nda-log">
+            <div class="platform-row" style="border-color: rgba(255, 215, 0, 0.2);">
+                <span class="platform-icon">🛡️</span>
+                <div class="platform-info">
+                    <h4 style="color:#FFD700;">Loading agreements...</h4>
+                    <p>Checking Firestore...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
+        var portalDb;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp({
+                    apiKey: "AIzaSyDs9vWS1Z2L0w3VEyHCr7vhOveTF_6hcAw",
+                    authDomain: "jreycash-32ac9.firebaseapp.com",
+                    projectId: "jreycash-32ac9",
+                    storageBucket: "jreycash-32ac9.firebasestorage.app",
+                    messagingSenderId: "100386315419",
+                    appId: "1:100386315419:web:99eb552259c31ef9bffa3e"
+                });
+            }
+            portalDb = firebase.firestore();
+        } catch(e) {}
+
         function setTimeFilter(btn) {
             document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         }
+
+        var currentNdaLink = '';
+
+        function generateNdaLink() {
+            var phone = document.getElementById('nda-phone').value.trim();
+            if (!phone) { alert('Please enter a phone number.'); return; }
+
+            var ndaId = 'nda_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            var expiry = Date.now() + (24 * 60 * 60 * 1000);
+
+            var baseUrl = window.location.origin + window.location.pathname.replace('portal.html', 'nda.html');
+            currentNdaLink = baseUrl + '?id=' + ndaId + '&exp=' + expiry;
+
+            document.getElementById('nda-generated-link').textContent = currentNdaLink;
+            document.getElementById('nda-link-result').style.display = 'block';
+
+            if (portalDb) {
+                portalDb.collection('nda_links').doc(ndaId).set({
+                    ndaId: ndaId,
+                    phone: phone,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    expiresAt: new Date(expiry),
+                    status: 'pending'
+                });
+            }
+        }
+
+        function copyNdaLink() {
+            navigator.clipboard.writeText(currentNdaLink).then(function() {
+                alert('Link copied to clipboard!');
+            });
+        }
+
+        function sendNdaSms() {
+            var phone = document.getElementById('nda-phone').value.trim().replace(/[^0-9]/g, '');
+            var msg = encodeURIComponent('Jrey Cash has sent you a Privacy & Confidentiality Agreement. Please review and sign within 24 hours: ' + currentNdaLink);
+            window.open('sms:' + phone + '?body=' + msg);
+        }
+
+        // Load signed agreements
+        function loadNdaLog() {
+            if (!portalDb) {
+                document.getElementById('nda-log').innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;">Firebase not connected. Signed agreements will appear here in production.</p>';
+                return;
+            }
+            portalDb.collection('nda_agreements').orderBy('signedAt', 'desc').limit(20).onSnapshot(function(snapshot) {
+                var log = document.getElementById('nda-log');
+                if (snapshot.empty) {
+                    log.innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;">No signed agreements yet.</p>';
+                    return;
+                }
+                log.innerHTML = '';
+                snapshot.forEach(function(doc) {
+                    var d = doc.data();
+                    var signedDate = d.signedAt ? d.signedAt.toDate().toLocaleDateString() + ' ' + d.signedAt.toDate().toLocaleTimeString() : 'Pending';
+                    var row = document.createElement('div');
+                    row.className = 'platform-row';
+                    row.style.borderColor = 'rgba(255, 215, 0, 0.2)';
+                    row.style.marginBottom = '6px';
+                    row.innerHTML =
+                        '<span class="platform-icon">🛡️</span>' +
+                        '<div class="platform-info">' +
+                            '<h4 style="color:#FFD700;">' + (d.printedName || d.displayName || 'Unknown') + '</h4>' +
+                            '<p>' + (d.email || '') + '</p>' +
+                        '</div>' +
+                        '<div class="platform-stat">' +
+                            '<div class="big" style="color:var(--neon-green);font-size:0.8rem;">✓ Signed</div>' +
+                            '<div class="trend">' + signedDate + '</div>' +
+                        '</div>';
+                    log.appendChild(row);
+                });
+            });
+        }
+
+        loadNdaLog();
     </script>
 </body>
 </html>

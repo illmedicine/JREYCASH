@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JREY CASH | Privacy & Confidentiality Agreement</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { padding: 0; }
+
+        .nda-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nda-header {
+            text-align: center;
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nda-header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .nda-header h1 {
+            font-size: 1.3rem;
+            color: var(--neon-cyan);
+            margin-bottom: 4px;
+        }
+
+        .nda-header p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .nda-expired {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .nda-expired h2 {
+            color: var(--neon-magenta);
+            margin-bottom: 8px;
+        }
+
+        .nda-expired p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .nda-auth {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .nda-auth p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        .nda-progress {
+            display: flex;
+            gap: 4px;
+            padding: 16px 20px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .progress-pip {
+            flex: 1;
+            height: 4px;
+            background: var(--bg-card);
+            border-radius: 2px;
+            transition: background 0.3s;
+        }
+
+        .progress-pip.completed { background: var(--neon-green); }
+        .progress-pip.active { background: var(--neon-cyan); }
+
+        .nda-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .nda-pillar {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .nda-pillar.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pillar-num {
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .nda-pillar h2 {
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+        }
+
+        .nda-pillar p, .nda-pillar li {
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .nda-pillar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nda-pillar li {
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .nda-pillar li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--neon-cyan);
+            font-weight: 800;
+        }
+
+        .nda-pillar .highlight {
+            color: var(--neon-magenta);
+            font-weight: 700;
+        }
+
+        .nda-agree-section {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .nda-agree-section label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .nda-agree-section input[type="checkbox"] {
+            margin-top: 3px;
+            accent-color: var(--neon-cyan);
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .nda-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: 10px;
+        }
+
+        .nda-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+
+        .nda-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nda-btn.secondary {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+        }
+
+        .nda-btn.primary {
+            background: var(--neon-cyan);
+            color: var(--bg-dark);
+        }
+
+        .nda-btn.sign {
+            background: linear-gradient(135deg, var(--neon-green), #00cc55);
+            color: var(--bg-dark);
+        }
+
+        .nda-signature {
+            margin-top: 20px;
+        }
+
+        .nda-signature input {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        .nda-signature input:focus { border-color: var(--neon-cyan); }
+
+        .nda-success {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .nda-success .success-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        .nda-success h2 {
+            color: var(--neon-green);
+            margin-bottom: 8px;
+        }
+
+        .nda-success p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        .vip-badge-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(0, 255, 102, 0.15), rgba(0, 243, 255, 0.15));
+            border: 1px solid var(--neon-green);
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--neon-green);
+        }
+
+        .nda-preamble {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.06), rgba(255, 0, 255, 0.06));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .nda-preamble p {
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .timer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--neon-magenta);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nda-container">
+        <div class="nda-header">
+            <img src="assets/jreycash-hero.png" alt="Jrey Cash">
+            <h1>Privacy & Confidentiality Agreement</h1>
+            <p>JREY CASH — BUFFALO, NY</p>
+            <div class="timer-badge" id="nda-timer">⏳ Expires in <span id="timer-countdown">24:00:00</span></div>
+        </div>
+
+        <!-- Expired State -->
+        <div id="nda-expired" class="nda-expired" style="display:none;">
+            <h2>Link Expired</h2>
+            <p>This agreement link is no longer valid. Please contact Jrey Cash for a new link.</p>
+        </div>
+
+        <!-- Auth Gate -->
+        <div id="nda-auth" class="nda-auth">
+            <p>You must sign in with your Google account to review and sign this agreement.</p>
+            <button class="btn-google" onclick="ndaSignIn()" style="max-width:300px;margin:0 auto;">
+                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                Sign in with Google
+            </button>
+        </div>
+
+        <!-- Agreement Flow -->
+        <div id="nda-flow" style="display:none;flex:1;display:none;flex-direction:column;">
+            <div class="nda-progress">
+                <div class="progress-pip active" id="pip-0"></div>
+                <div class="progress-pip" id="pip-1"></div>
+                <div class="progress-pip" id="pip-2"></div>
+                <div class="progress-pip" id="pip-3"></div>
+                <div class="progress-pip" id="pip-4"></div>
+                <div class="progress-pip" id="pip-5"></div>
+                <div class="progress-pip" id="pip-6"></div>
+            </div>
+
+            <div class="nda-scroll" id="nda-scroll">
+                <!-- Pillar 0: Preamble -->
+                <div class="nda-pillar active" id="pillar-0">
+                    <p class="pillar-num">Preamble</p>
+                    <h2>Privacy & Confidentiality Agreement</h2>
+                    <div class="nda-preamble">
+                        <p>THIS AGREEMENT is entered into on this date by and between <strong style="color:var(--neon-cyan);">Jrey Cash</strong> (hereinafter "Disclosing Party") and <strong style="color:var(--neon-cyan);" id="nda-receiver-name">You</strong> (hereinafter "Receiving Party").</p>
+                    </div>
+                    <p><strong>WHEREAS</strong>, the Disclosing Party is a public figure who highly values their personal privacy and the privacy of their guests;</p>
+                    <p><strong>WHEREAS</strong>, the Receiving Party has been invited to a private location or event (the "Meeting") with the Disclosing Party;</p>
+                    <p><strong>NOW, THEREFORE</strong>, in consideration of the mutual promises herein, the parties agree as follows:</p>
+                    <div class="nda-agree-section">
+                        <label>
+                            <input type="checkbox" id="agree-0" onchange="checkPillarAgreed(0)">
+                            <span>I acknowledge that I have read and understand the preamble of this agreement.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pillar 1 -->
+                <div class="nda-pillar" id="pillar-1">
+                    <p class="pillar-num">Section 1 of 7</p>
+                    <h2>Definition of Confidential Information</h2>
+                    <p>"Confidential Information" shall include, but is not limited to, any and all non-public information relating to the Disclosing Party, their family, friends, associates, or other guests. This includes:</p>
+                    <ul>
+                        <li>The occurrence, location, and time of the Meeting.</li>
+                        <li>The identity of the Disclosing Party and any other individuals present.</li>
+                        <li>Any conversations, behaviors, personal habits, or activities observed or participated in during the Meeting.</li>
+                        <li>The physical layout, security measures, or location details of the private premises.</li>
+                    </ul>
+                    <div class="nda-agree-section">
+                        <label>
+                            <input type="checkbox" id="agree-1" onchange="checkPillarAgreed(1)">
+                            <span>I agree to treat all information described above as strictly confidential.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pillar 2 -->
+                <div class="nda-pillar" id="pillar-2">
+                    <p class="pillar-num">Section 2 of 7</p>
+                    <h2>Non-Disclosure & Non-Disparagement</h2>
+                    <p>The Receiving Party agrees to maintain the strictest confidentiality regarding all Confidential Information. The Receiving Party shall not:</p>
+                    <ul>
+                        <li>Discuss, publish, post, or disseminate any Confidential Information to any third party, including family members, friends, journalists, or media outlets.</li>
+                        <li>Post any details, cryptic or explicit, on any social media platforms, blogs, or public forums.</li>
+                        <li>Make any derogatory, disparaging, or negative statements regarding the Disclosing Party that could harm their public image, reputation, or business interests.</li>
+                    </ul>
+                    <div class="nda-agree-section">
+                        <label>
+                            <input type="checkbox" id="agree-2" onchange="checkPillarAgreed(2)">
+                            <span>I agree to the non-disclosure and non-disparagement terms outlined above.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pillar 3 -->
+                <div class="nda-pillar" id="pillar-3">
+                    <p class="pillar-num">Section 3 of 7</p>
+                    <h2>Prohibition of Electronic Devices & Recording</h2>
+                    <p>To ensure the absolute privacy of all parties, the Receiving Party agrees to the following restrictions regarding electronic devices:</p>
+                    <ul>
+                        <li><span class="highlight">Surrender of Devices:</span> The Receiving Party agrees to surrender all mobile phones, smartwatches, cameras, recording devices, or any other electronic transmission devices upon entry to the premises, to be securely stored and returned upon departure.</li>
+                        <li><span class="highlight">No Unauthorized Recording:</span> Under no circumstances shall the Receiving Party photograph, film, audio-record, or otherwise capture any media of the Disclosing Party, the premises, or the Meeting.</li>
+                    </ul>
+                    <div class="nda-agree-section">
+                        <label>
+                            <input type="checkbox" id="agree-3" onchange="checkPillarAgreed(3)">
+                            <span>I agree to surrender all electronic devices and refrain from any recording.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pillar 4 -->
+                <div class="nda-pillar" id="pillar-4">
+                    <p class="pillar-num">Section 4 of 7</p>
+                    <h2>Protected Disclosures (Legal Exceptions)</h2>
+                    <p>Nothing in this Agreement is intended to or shall be construed to prevent, impede, or interfere with the Receiving Party's right to:</p>
+                    <ul>
+                        <li>Report any suspected criminal activity or illegal acts to appropriate law enforcement agencies.</li>
+                        <li>Participate in any investigation conducted by a local, state, or federal government agency.</li>
+                        <li>Testify truthfully under oath pursuant to a valid subpoena or court order.</li>
+                    </ul>
+                    <p>Any clause in this Agreement that would otherwise restrict these legal rights is void and unenforceable.</p>
+                    <div class="nda-agree-section">
+                        <label>
+                            <input type="checkbox" id="agree-4" onchange="checkPillarAgreed(4)">
+                            <span>I acknowledge these protected legal rights and exceptions.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pillar 5 -->
+                <div class="nda-pillar" id="pillar-5">
+                    <p class="pillar-num">Section 5 of 7</p>
+                    <h2>Return of Property</h2>
+                    <p>Upon request by the Disclosing Party, or immediately upon the conclusion of the Meeting, the Receiving Party agrees to return or destroy any physical or digital materials in their possession that contain Confidential Information.</p>
+                    <div class="nda-agree-section">
+                        <label>
+                            <input type="checkbox" id="agree-5" onchange="checkPillarAgreed(5)">
+                            <span>I agree to return or destroy all confidential materials upon request or at the conclusion of the Meeting.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pillar 6 -->
+                <div class="nda-pillar" id="pillar-6">
+                    <p class="pillar-num">Section 6 of 7</p>
+                    <h2>Remedies & Liquidated Damages</h2>
+                    <p>The Receiving Party acknowledges that a breach of this Agreement will cause <span class="highlight">irreparable harm</span> to the Disclosing Party's reputation, brand, and privacy, the exact financial impact of which would be difficult to calculate.</p>
+                    <ul>
+                        <li>In the event of a breach, the Disclosing Party shall be entitled to seek <span class="highlight">immediate injunctive relief</span> to prevent further disclosure.</li>
+                        <li>The Receiving Party agrees to be held liable for <span class="highlight">liquidated damages</span> for each unauthorized disclosure, in addition to any legal fees incurred by the Disclosing Party in enforcing this Agreement.</li>
+                    </ul>
+                    <div class="nda-agree-section">
+                        <label>
+                            <input type="checkbox" id="agree-6" onchange="checkPillarAgreed(6)">
+                            <span>I understand and accept the remedies and damages provisions described above.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pillar 7 (Severability + Signature) -->
+                <div class="nda-pillar" id="pillar-7">
+                    <p class="pillar-num">Section 7 of 7</p>
+                    <h2>Severability & Execution</h2>
+                    <p>If any provision of this Agreement is found to be void, invalid, or unenforceable by a court of competent jurisdiction, the remaining provisions shall remain in full force and effect.</p>
+                    <p><strong>IN WITNESS WHEREOF</strong>, the parties have executed this Agreement as of this date.</p>
+
+                    <div class="nda-signature">
+                        <label style="font-size:0.75rem;color:var(--text-muted);display:block;margin-bottom:6px;">Your Full Legal Name (Printed)</label>
+                        <input type="text" id="nda-print-name" placeholder="Enter your full legal name">
+                        <label style="font-size:0.75rem;color:var(--text-muted);display:block;margin-bottom:6px;">Digital Signature (Type your name to sign)</label>
+                        <input type="text" id="nda-signature" placeholder="Type your name as your digital signature" style="font-style:italic;font-family:'Playfair Display',serif;font-size:1.1rem;">
+                    </div>
+
+                    <div class="nda-agree-section" style="margin-top:16px;">
+                        <label>
+                            <input type="checkbox" id="agree-7" onchange="checkFinalAgreed()">
+                            <span>I have read, understood, and agree to ALL sections of this Privacy & Confidentiality Agreement. I am signing this agreement of my own free will.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nda-footer" id="nda-footer">
+                <button class="nda-btn secondary" id="btn-prev" onclick="ndaPrev()" disabled>Back</button>
+                <button class="nda-btn primary" id="btn-next" onclick="ndaNext()" disabled>Next Section</button>
+            </div>
+        </div>
+
+        <!-- Success State -->
+        <div class="nda-success" id="nda-success">
+            <div class="success-icon">🛡️</div>
+            <h2>Agreement Signed</h2>
+            <p>Your Privacy & Confidentiality Agreement has been recorded and is now active. Thank you for your trust.</p>
+            <div class="vip-badge-display">🛡️ VIP Trusted Member</div>
+            <p style="margin-top:20px;font-size:0.75rem;">This agreement is valid for 24 hours from the time of signing. A record has been securely stored.</p>
+            <a href="index.html" style="display:inline-block;margin-top:20px;color:var(--neon-cyan);font-size:0.85rem;">← Return to Jrey Cash App</a>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDs9vWS1Z2L0w3VEyHCr7vhOveTF_6hcAw",
+            authDomain: "jreycash-32ac9.firebaseapp.com",
+            projectId: "jreycash-32ac9",
+            storageBucket: "jreycash-32ac9.firebasestorage.app",
+            messagingSenderId: "100386315419",
+            appId: "1:100386315419:web:99eb552259c31ef9bffa3e"
+        };
+
+        var auth, db, ndaUser = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            db = firebase.firestore();
+        } catch(e) {}
+
+        var currentPillar = 0;
+        var totalPillars = 8;
+        var pillarAgreed = [false,false,false,false,false,false,false,false];
+
+        // Parse URL params
+        var params = new URLSearchParams(window.location.search);
+        var ndaId = params.get('id');
+        var ndaExpiry = parseInt(params.get('exp') || '0');
+
+        // Check expiry
+        function checkExpiry() {
+            if (!ndaId || !ndaExpiry) {
+                document.getElementById('nda-expired').style.display = 'block';
+                document.getElementById('nda-auth').style.display = 'none';
+                document.getElementById('nda-timer').style.display = 'none';
+                return false;
+            }
+            if (Date.now() > ndaExpiry) {
+                document.getElementById('nda-expired').style.display = 'block';
+                document.getElementById('nda-auth').style.display = 'none';
+                document.getElementById('nda-timer').style.display = 'none';
+                return false;
+            }
+            startCountdown();
+            return true;
+        }
+
+        function startCountdown() {
+            function update() {
+                var remaining = ndaExpiry - Date.now();
+                if (remaining <= 0) {
+                    document.getElementById('timer-countdown').textContent = 'EXPIRED';
+                    return;
+                }
+                var h = Math.floor(remaining / 3600000);
+                var m = Math.floor((remaining % 3600000) / 60000);
+                var s = Math.floor((remaining % 60000) / 1000);
+                document.getElementById('timer-countdown').textContent =
+                    String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+                setTimeout(update, 1000);
+            }
+            update();
+        }
+
+        function ndaSignIn() {
+            if (auth) {
+                auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(function(result) {
+                    ndaUser = result.user;
+                    showAgreement();
+                }).catch(function() {
+                    ndaUser = { displayName: 'Guest', email: 'guest@demo.com', uid: 'demo-nda' };
+                    showAgreement();
+                });
+            } else {
+                ndaUser = { displayName: 'Guest', email: 'guest@demo.com', uid: 'demo-nda' };
+                showAgreement();
+            }
+        }
+
+        function showAgreement() {
+            document.getElementById('nda-auth').style.display = 'none';
+            var flow = document.getElementById('nda-flow');
+            flow.style.display = 'flex';
+            document.getElementById('nda-receiver-name').textContent = ndaUser.displayName || 'Guest';
+        }
+
+        function checkPillarAgreed(index) {
+            var cb = document.getElementById('agree-' + index);
+            pillarAgreed[index] = cb.checked;
+            updateButtons();
+        }
+
+        function checkFinalAgreed() {
+            var cb = document.getElementById('agree-7');
+            var name = document.getElementById('nda-print-name').value.trim();
+            var sig = document.getElementById('nda-signature').value.trim();
+            pillarAgreed[7] = cb.checked && name.length > 0 && sig.length > 0;
+            updateButtons();
+        }
+
+        function updateButtons() {
+            var nextBtn = document.getElementById('btn-next');
+            var prevBtn = document.getElementById('btn-prev');
+
+            prevBtn.disabled = currentPillar === 0;
+
+            if (currentPillar === totalPillars - 1) {
+                nextBtn.textContent = 'Sign Agreement';
+                nextBtn.className = 'nda-btn sign';
+                nextBtn.disabled = !pillarAgreed[7];
+            } else {
+                nextBtn.textContent = 'Next Section';
+                nextBtn.className = 'nda-btn primary';
+                nextBtn.disabled = !pillarAgreed[currentPillar];
+            }
+        }
+
+        function ndaNext() {
+            if (currentPillar === totalPillars - 1) {
+                signAgreement();
+                return;
+            }
+            if (!pillarAgreed[currentPillar]) return;
+
+            document.getElementById('pillar-' + currentPillar).classList.remove('active');
+            document.getElementById('pip-' + currentPillar).classList.remove('active');
+            document.getElementById('pip-' + currentPillar).classList.add('completed');
+
+            currentPillar++;
+            document.getElementById('pillar-' + currentPillar).classList.add('active');
+            document.getElementById('pip-' + currentPillar).classList.add('active');
+
+            document.getElementById('nda-scroll').scrollTop = 0;
+
+            // Add input listeners on final page
+            if (currentPillar === totalPillars - 1) {
+                document.getElementById('nda-print-name').addEventListener('input', checkFinalAgreed);
+                document.getElementById('nda-signature').addEventListener('input', checkFinalAgreed);
+            }
+
+            updateButtons();
+        }
+
+        function ndaPrev() {
+            if (currentPillar === 0) return;
+
+            document.getElementById('pillar-' + currentPillar).classList.remove('active');
+            document.getElementById('pip-' + currentPillar).classList.remove('active');
+
+            currentPillar--;
+            document.getElementById('pillar-' + currentPillar).classList.add('active');
+            document.getElementById('pip-' + currentPillar).classList.add('active');
+            document.getElementById('pip-' + currentPillar).classList.remove('completed');
+
+            document.getElementById('nda-scroll').scrollTop = 0;
+            updateButtons();
+        }
+
+        function signAgreement() {
+            var printedName = document.getElementById('nda-print-name').value.trim();
+            var signature = document.getElementById('nda-signature').value.trim();
+
+            if (!printedName || !signature) return;
+
+            var record = {
+                ndaId: ndaId,
+                userId: ndaUser.uid,
+                displayName: ndaUser.displayName || printedName,
+                email: ndaUser.email,
+                printedName: printedName,
+                signature: signature,
+                signedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                expiresAt: new Date(ndaExpiry),
+                status: 'signed',
+                allPillarsAgreed: true
+            };
+
+            if (db && ndaUser.uid !== 'demo-nda') {
+                db.collection('nda_agreements').add(record).then(function() {
+                    // Award VIP badge
+                    db.collection('users').doc(ndaUser.uid).set({
+                        vipTrustedMember: true,
+                        ndaSignedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                }).catch(function(err) { console.warn('NDA save failed:', err.message); });
+            }
+
+            document.getElementById('nda-flow').style.display = 'none';
+            document.getElementById('nda-success').style.display = 'block';
+        }
+
+        // Init
+        if (checkExpiry()) {
+            // Valid link
+        }
+    </script>
+</body>
+</html>
