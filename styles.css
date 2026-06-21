@@ -1154,13 +1154,34 @@ img.album-art {
     color: var(--neon-cyan);
 }
 
+.album-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.btn-album-listen {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #1DB954;
+    text-decoration: none;
+    border: 1px solid rgba(29, 185, 84, 0.3);
+    border-radius: 12px;
+    padding: 3px 8px;
+    transition: all 0.2s;
+}
+
+.btn-album-listen:active {
+    background: rgba(29, 185, 84, 0.15);
+}
+
 .btn-album-comment {
     background: none;
     border: none;
     color: var(--text-dim);
     font-size: 0.75rem;
     cursor: pointer;
-    margin-top: 4px;
     padding: 2px 0;
     transition: color 0.2s;
 }
