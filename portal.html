@@ -364,16 +364,48 @@
 
     <div style="height: 24px;"></div>
 
-    <!-- VidIQ Analytics Embed -->
-    <p class="analytics-section-title">📊 VidIQ Analytics Dashboard</p>
-    <div style="margin-bottom: 24px; border: 1px solid var(--glass-border); border-radius: var(--radius); overflow: hidden; background: var(--bg-card);">
-        <iframe
-            src="https://vidiq.com/youtube-stats/channel/@jreycash/"
-            style="width: 100%; height: 1200px; border: none; display: block;"
-            title="VidIQ Analytics for Jrey Cash"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            loading="lazy">
-        </iframe>
+    <!-- Advanced YouTube Analytics Dashboard (VidIQ-style) -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <p class="analytics-section-title">📊 Advanced Analytics Dashboard</p>
+        <button onclick="refreshAdvancedAnalytics()" style="padding: 8px 16px; background: var(--neon-cyan); border: none; border-radius: 6px; color: var(--bg-dark); font-size: 0.8rem; font-weight: 600; cursor: pointer;">🔄 Refresh Data</button>
+    </div>
+
+    <!-- Top Videos Chart -->
+    <div class="action-section" style="margin-bottom: 24px;">
+        <h3 style="color: var(--neon-cyan); margin-top: 0;">Top Performing Videos</h3>
+        <div id="top-videos-list" style="display: grid; gap: 12px;">
+            <p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Loading top videos...</p>
+        </div>
+    </div>
+
+    <!-- Performance Metrics Grid -->
+    <div class="dashboard-grid" style="margin-bottom: 24px;">
+        <div class="stat-card">
+            <span class="stat-title">Avg Video Views</span>
+            <span class="stat-value" style="color: var(--neon-cyan);" id="avg-video-views">—</span>
+            <span class="stat-trend" id="avg-video-trend">Per video</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Total Video Count</span>
+            <span class="stat-value" style="color: var(--neon-green);" id="total-video-count">—</span>
+            <span class="stat-trend">All-time uploads</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Avg Engagement</span>
+            <span class="stat-value" style="color: var(--neon-magenta);" id="avg-engagement">—</span>
+            <span class="stat-trend" id="engagement-trend">Est. per video</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-title">Channel Growth</span>
+            <span class="stat-value" style="color: #FFD700;" id="growth-rate">—</span>
+            <span class="stat-trend">Estimated trend</span>
+        </div>
+    </div>
+
+    <!-- Video Performance Chart -->
+    <div class="action-section" style="margin-bottom: 24px;">
+        <h3 style="color: var(--neon-cyan); margin-top: 0;">Video View Distribution</h3>
+        <canvas id="videoPerformanceChart" style="max-height: 300px;"></canvas>
     </div>
 
     <!-- Content Upload -->
@@ -434,6 +466,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -913,6 +946,7 @@
         // Load YouTube analytics on page load
         window.addEventListener('load', function() {
             loadYouTubeAnalytics();
+            loadTopVideos();
         });
 
         // Refresh YouTube analytics every 5 minutes (if API key is configured)
@@ -921,6 +955,202 @@
                 loadYouTubeAnalytics();
             }
         }, 5 * 60 * 1000);
+
+        // Advanced Analytics - Fetch Top Videos
+        var videoPerformanceChart;
+
+        function refreshAdvancedAnalytics() {
+            document.querySelector('button[onclick="refreshAdvancedAnalytics()"]').textContent = '⏳ Loading...';
+            loadTopVideos();
+        }
+
+        function loadTopVideos() {
+            var youtubeChannelId = 'UCpu4oacM0CPZW4H-BgZPkKA';
+            var youtubeApiKey = 'AIzaSyAi2aGmOL30b2Y2EB4_ZQ3lRRmJZKJue5c';
+
+            // Fetch channel's uploads playlist
+            fetch('https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=' + youtubeChannelId + '&key=' + youtubeApiKey)
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (data.items && data.items.length > 0) {
+                        var uploadsPlaylistId = data.items[0].contentDetails.relatedPlaylists.uploads;
+                        fetchPlaylistVideos(uploadsPlaylistId, youtubeApiKey);
+                    }
+                })
+                .catch(function(err) {
+                    console.warn('Failed to fetch uploads playlist:', err);
+                    document.querySelector('button[onclick="refreshAdvancedAnalytics()"]').textContent = '🔄 Refresh Data';
+                });
+        }
+
+        function fetchPlaylistVideos(playlistId, apiKey) {
+            var allVideos = [];
+            var pageToken = '';
+
+            function fetchPage(token) {
+                var url = 'https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=' + playlistId +
+                          '&maxResults=50&key=' + apiKey;
+                if (token) url += '&pageToken=' + token;
+
+                fetch(url)
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) {
+                        if (data.items) {
+                            allVideos = allVideos.concat(data.items);
+                        }
+                        if (data.nextPageToken && allVideos.length < 100) {
+                            fetchPage(data.nextPageToken);
+                        } else {
+                            fetchVideoStats(allVideos.slice(0, 50), apiKey);
+                        }
+                    })
+                    .catch(function(err) {
+                        console.warn('Error fetching playlist videos:', err);
+                        document.querySelector('button[onclick="refreshAdvancedAnalytics()"]').textContent = '🔄 Refresh Data';
+                    });
+            }
+            fetchPage();
+        }
+
+        function fetchVideoStats(videoItems, apiKey) {
+            var videoIds = videoItems.map(function(item) { return item.contentDetails.videoId; }).join(',');
+
+            fetch('https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=' + videoIds + '&key=' + apiKey)
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (data.items) {
+                        var videoStats = data.items
+                            .map(function(video) {
+                                return {
+                                    title: video.snippet.title,
+                                    views: parseInt(video.statistics.viewCount || 0),
+                                    likes: parseInt(video.statistics.likeCount || 0),
+                                    comments: parseInt(video.statistics.commentCount || 0),
+                                    publishedAt: new Date(video.snippet.publishedAt)
+                                };
+                            })
+                            .sort(function(a, b) { return b.views - a.views; });
+
+                        renderTopVideos(videoStats);
+                        renderVideoPerformanceChart(videoStats);
+                        renderAdvancedMetrics(videoStats);
+                    }
+                    document.querySelector('button[onclick="refreshAdvancedAnalytics()"]').textContent = '🔄 Refresh Data';
+                })
+                .catch(function(err) {
+                    console.warn('Error fetching video stats:', err);
+                    document.querySelector('button[onclick="refreshAdvancedAnalytics()"]').textContent = '🔄 Refresh Data';
+                });
+        }
+
+        function renderTopVideos(videos) {
+            var list = document.getElementById('top-videos-list');
+            if (videos.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:20px;">No videos found.</p>';
+                return;
+            }
+
+            list.innerHTML = '';
+            videos.slice(0, 5).forEach(function(video, index) {
+                var engagementScore = video.likes + video.comments;
+                var engagementRate = video.views > 0 ? ((engagementScore / video.views) * 100).toFixed(2) : 0;
+
+                var row = document.createElement('div');
+                row.className = 'platform-row';
+                row.style.marginBottom = '6px';
+                row.innerHTML =
+                    '<span class="platform-icon" style="background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.2rem;">#' + (index + 1) + '</span>' +
+                    '<div class="platform-info">' +
+                        '<h4 style="font-size: 0.8rem; white-space: normal; word-break: break-word;">' + video.title.substring(0, 50) + '...</h4>' +
+                        '<p style="font-size: 0.65rem; color: var(--text-muted);">' +
+                            '👁 ' + formatNumber(video.views) + ' views • ' +
+                            '❤ ' + formatNumber(video.likes) + ' likes • ' +
+                            '💬 ' + formatNumber(video.comments) + ' comments' +
+                        '</p>' +
+                    '</div>' +
+                    '<div style="text-align: right; flex-shrink: 0;">' +
+                        '<div style="font-size: 0.8rem; color: var(--neon-green); font-weight: 600;">' + engagementRate + '%</div>' +
+                        '<div style="font-size: 0.65rem; color: var(--text-muted);">Engagement</div>' +
+                    '</div>';
+                list.appendChild(row);
+            });
+        }
+
+        function renderVideoPerformanceChart(videos) {
+            var ctx = document.getElementById('videoPerformanceChart');
+            if (!ctx) return;
+
+            var topVideos = videos.slice(0, 10);
+            var labels = topVideos.map(function(v) { return v.title.substring(0, 20) + '...'; });
+            var viewData = topVideos.map(function(v) { return v.views; });
+            var engagementData = topVideos.map(function(v) { return v.likes + v.comments; });
+
+            if (videoPerformanceChart) {
+                videoPerformanceChart.destroy();
+            }
+
+            videoPerformanceChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Views',
+                            data: viewData,
+                            backgroundColor: 'rgba(0, 243, 255, 0.6)',
+                            borderColor: 'var(--neon-cyan)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Engagement (Likes + Comments)',
+                            data: engagementData,
+                            backgroundColor: 'rgba(255, 0, 255, 0.6)',
+                            borderColor: 'var(--neon-magenta)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'var(--text-light)',
+                                font: { size: 11 }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: 'var(--text-muted)', font: { size: 10 } },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            ticks: { color: 'var(--text-muted)', font: { size: 9 } },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderAdvancedMetrics(videos) {
+            var totalViews = videos.reduce(function(sum, v) { return sum + v.views; }, 0);
+            var totalEngagement = videos.reduce(function(sum, v) { return sum + (v.likes + v.comments); }, 0);
+            var avgViews = videos.length > 0 ? Math.floor(totalViews / videos.length) : 0;
+            var avgEngagement = videos.length > 0 ? Math.floor(totalEngagement / videos.length) : 0;
+            var engagementRate = totalViews > 0 ? ((totalEngagement / totalViews) * 100).toFixed(2) : 0;
+
+            document.getElementById('avg-video-views').textContent = formatNumber(avgViews);
+            document.getElementById('total-video-count').textContent = videos.length;
+            document.getElementById('avg-engagement').textContent = formatNumber(avgEngagement);
+            document.getElementById('growth-rate').textContent = engagementRate + '%';
+            document.getElementById('engagement-trend').textContent = 'Avg engagement rate';
+
+            console.log('Advanced metrics updated: ' + avgViews + ' avg views, ' + engagementRate + '% engagement rate');
+        }
     </script>
 </body>
 </html>
