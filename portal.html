@@ -234,6 +234,17 @@
         </div>
     </div>
 
+    <!-- YouTube API Setup (Admin) -->
+    <div id="yt-setup-banner" style="display:none;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:8px;padding:12px;margin-bottom:16px;">
+        <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 8px 0;">⚙️ <strong>YouTube Analytics Setup Required</strong></p>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin:0 0 10px 0;">To display live YouTube analytics, configure your YouTube Data API key below.</p>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <input type="password" id="yt-api-key-input" placeholder="Paste your YouTube Data API key here" style="flex:1;padding:10px 12px;background:var(--bg-dark);border:1px solid rgba(255,215,0,0.2);border-radius:6px;color:var(--text-light);font-size:0.75rem;outline:none;font-family:monospace;">
+            <button onclick="configureYouTubeApiKey()" style="padding:10px 16px;background:rgba(255,215,0,0.2);border:1px solid rgba(255,215,0,0.4);border-radius:6px;color:#FFD700;font-size:0.75rem;font-weight:600;cursor:pointer;">Save</button>
+        </div>
+        <p style="font-size:0.7rem;color:var(--text-dim);margin:0;"><a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" style="color:#FFD700;text-decoration:underline;">Create API key</a> • <a href="https://developers.google.com/youtube/v3/getting-started" target="_blank" style="color:#FFD700;text-decoration:underline;">Setup guide</a></p>
+    </div>
+
     <!-- Platform Sync -->
     <p class="analytics-section-title">Platform Analytics</p>
     <div style="margin-bottom: 24px;">
@@ -252,11 +263,11 @@
             <span class="platform-icon">▶️</span>
             <div class="platform-info">
                 <h4>YouTube</h4>
-                <p>5 official videos • DGB Media</p>
+                <p id="yt-videos-info" style="color: var(--text-muted);">Loading...</p>
             </div>
             <div class="platform-stat">
-                <div class="big" style="color: #FF0000;">45.2K</div>
-                <div class="trend">"Chips" views</div>
+                <div class="big" style="color: #FF0000;" id="yt-total-views">—</div>
+                <div class="trend" id="yt-trend">Updating...</div>
             </div>
         </div>
         <div class="platform-row">
@@ -788,6 +799,116 @@
             });
             document.getElementById('member-list').innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:20px;">Connect Firebase to see live member data.</p>';
         }
+
+        // Load YouTube Analytics from VidIQ / YouTube Data API
+        function loadYouTubeAnalytics() {
+            var youtubeChannelHandle = '@jreycash';
+            var youtubeChannelId = 'UCpu4oacM0CPZW4H-BgZPkKA';
+            var youtubeApiKey = 'AIzaSyAi2aGmOL30b2Y2EB4_ZQ3lRRmJZKJue5c';
+
+            // Fetch channel statistics from YouTube Data API
+            fetch('https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=' + youtubeChannelId + '&key=' + youtubeApiKey)
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (data.error) {
+                        console.warn('YouTube API error:', data.error.message);
+                        loadYouTubeAnalyticsFromCache();
+                        return;
+                    }
+
+                    if (data.items && data.items.length > 0) {
+                        var channel = data.items[0];
+                        var stats = channel.statistics;
+                        var snippet = channel.snippet;
+
+                        var viewCount = parseInt(stats.viewCount || 0);
+                        var subscriberCount = parseInt(stats.subscriberCount || 0);
+                        var videoCount = parseInt(stats.videoCount || 0);
+
+                        // Cache the data
+                        localStorage.setItem('yt_cache_views', viewCount);
+                        localStorage.setItem('yt_cache_subs', subscriberCount);
+                        localStorage.setItem('yt_cache_videos', videoCount);
+                        localStorage.setItem('yt_cache_time', Date.now());
+
+                        updateYouTubeDisplay(viewCount, subscriberCount, videoCount);
+                        console.log('YouTube stats loaded: ' + formatNumber(viewCount) + ' views, ' + formatNumber(subscriberCount) + ' subs, ' + videoCount + ' videos');
+                    } else {
+                        console.warn('YouTube channel not found');
+                        loadYouTubeAnalyticsFromCache();
+                    }
+                })
+                .catch(function(err) {
+                    console.warn('YouTube API fetch error:', err);
+                    loadYouTubeAnalyticsFromCache();
+                });
+        }
+
+        function loadYouTubeAnalyticsFromCache() {
+            var cachedViews = localStorage.getItem('yt_cache_views');
+            var cachedSubs = localStorage.getItem('yt_cache_subs');
+            var cachedVideos = localStorage.getItem('yt_cache_videos');
+            var cachedTime = localStorage.getItem('yt_cache_time');
+
+            if (cachedViews && cachedSubs && cachedVideos) {
+                updateYouTubeDisplay(parseInt(cachedViews), parseInt(cachedSubs), parseInt(cachedVideos));
+                document.getElementById('yt-setup-banner').style.display = 'none';
+                if (cachedTime) {
+                    var hoursAgo = Math.floor((Date.now() - parseInt(cachedTime)) / (1000 * 60 * 60));
+                    console.log('Displaying cached YouTube data from ' + hoursAgo + ' hours ago');
+                }
+            } else {
+                document.getElementById('yt-total-views').textContent = '—';
+                document.getElementById('yt-videos-info').textContent = 'YouTube data unavailable';
+                document.getElementById('yt-trend').textContent = 'Click to configure';
+                document.getElementById('yt-setup-banner').style.display = 'block';
+            }
+        }
+
+        function configureYouTubeApiKey() {
+            var apiKey = document.getElementById('yt-api-key-input').value.trim();
+            if (!apiKey) {
+                alert('Please enter your YouTube Data API key.');
+                return;
+            }
+            setYouTubeApiKey(apiKey);
+            document.getElementById('yt-api-key-input').value = '';
+            document.getElementById('yt-setup-banner').style.display = 'none';
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function updateYouTubeDisplay(viewCount, subscriberCount, videoCount) {
+            var viewsFormatted = formatNumber(viewCount);
+            var subsFormatted = formatNumber(subscriberCount);
+
+            document.getElementById('yt-total-views').textContent = viewsFormatted;
+            document.getElementById('yt-videos-info').textContent = videoCount + ' videos • ' + subsFormatted + ' subscribers';
+            document.getElementById('yt-trend').textContent = 'Total channel views';
+        }
+
+        // Set YouTube API key from portal settings
+        function setYouTubeApiKey(apiKey) {
+            localStorage.setItem('youtube_api_key', apiKey);
+            console.log('YouTube API key configured. Reloading analytics...');
+            loadYouTubeAnalytics();
+        }
+
+        // Load YouTube analytics on page load
+        window.addEventListener('load', function() {
+            loadYouTubeAnalytics();
+        });
+
+        // Refresh YouTube analytics every 5 minutes (if API key is configured)
+        setInterval(function() {
+            if (localStorage.getItem('youtube_api_key')) {
+                loadYouTubeAnalytics();
+            }
+        }, 5 * 60 * 1000);
     </script>
 </body>
 </html>
